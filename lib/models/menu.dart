@@ -1,9 +1,18 @@
-import 'package:html/parser.dart' show parse;
+import 'package:html/parser.dart';
 
 import 'day.dart';
 
-class HtmlParser {
-  static Menu toMenu(String html) {
+class Menu {
+  final List<Day> days;
+  final String mondayDate;
+
+  Day? get today {
+    var now = DateTime.now();
+    if (now.weekday > 5) return null;
+    return days[now.weekday - 1];
+  }
+
+  factory Menu.parseHtml(String html) {
     var document = parse(html);
 
     var strong = document.getElementsByTagName("strong");
@@ -18,17 +27,6 @@ class HtmlParser {
     });
 
     return Menu(menu, mondayDate);
-  }
-}
-
-class Menu {
-  final List<Day> days;
-  final String mondayDate;
-
-  Day? get today {
-    var now = DateTime.now();
-    if (now.weekday > 5) return null;
-    return days[now.weekday - 1];
   }
 
   Menu(this.days, this.mondayDate);
