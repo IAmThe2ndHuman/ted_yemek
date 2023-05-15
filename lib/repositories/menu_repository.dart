@@ -1,32 +1,54 @@
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuRepository {
+  static final Uri menuUri = Uri.https("www.tedistanbul.com.tr", "/sofra/MobilHaftalik.aspx", {"school": "3"});
+
   static Future<String> getMenuHtml() async {
     var prefs = await SharedPreferences.getInstance();
 
     var now = DateTime.now();
-    var cacheExpiration = prefs.getInt("htmlCache_expiration"); // EPOCH (MS)
+    var cacheExpiration = prefs.getInt("cache.html.expiration"); // EPOCH (MS)
 
     if (cacheExpiration != null && cacheExpiration > now.millisecondsSinceEpoch) {
-      var htmlCache = prefs.getString("htmlCache");
+      var htmlCache = prefs.getString("cache.html");
       if (htmlCache != null) return htmlCache;
     }
 
     var html = await _fetchMenuHtml();
-    await prefs.setString("htmlCache", html);
+    await prefs.setString("cache.html", html);
 
     var expirationDate = now
-        .add(Duration(days: 7 - now.weekday))
+        .add(Duration(days: 8 - now.weekday))
         .subtract(Duration(hours: now.hour, minutes: now.minute, seconds: now.second, milliseconds: now.millisecond));
-    await prefs.setInt("htmlCache_expiration", expirationDate.millisecondsSinceEpoch);
+    await prefs.setInt("cache.html.expiration", expirationDate.millisecondsSinceEpoch);
 
     return html;
   }
 
+  static Future<void> clearCache() async {
+    var prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove("cache.html.expiration");
+    await prefs.remove("cache.html");
+  }
+
+  static Future<bool> get menuCacheValid async {
+    var prefs = await SharedPreferences.getInstance();
+
+    var cacheExpiration = prefs.getInt("cache.html.expiration");
+    if (cacheExpiration == null) return false;
+
+    var now = DateTime.now();
+
+    return cacheExpiration > now.millisecondsSinceEpoch;
+  }
+
   static Future<String> _fetchMenuHtml() async {
-    // var response = await http.get(Uri.https("www.tedistanbul.com.tr", "/sofra/MobilHaftalik.aspx", {"school": "3"}));
-    // return response.body;
-    return html; // todo dev
+    var response = await http.get(menuUri);
+    return response.body;
+
+    // return html; // todo dev
   }
 }
 
