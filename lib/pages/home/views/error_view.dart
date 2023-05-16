@@ -33,7 +33,7 @@ class ErrorView extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: BlocProvider.of<HomeCubit>(context).initializeMenu,
                   icon: const Icon(Icons.refresh),
-                  label: Text("Yenile"),
+                  label: const Text("Yenile"),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(

@@ -10,10 +10,10 @@ class DishCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: dense ? EdgeInsets.symmetric(horizontal: 0) : null,
+      contentPadding: dense ? const EdgeInsets.symmetric(horizontal: 0) : null,
       dense: true,
       title: Text(dishName, style: Theme.of(context).textTheme.bodyLarge),
-      leading: Icon(Icons.remove),
+      leading: const Icon(Icons.remove),
     );
   }
 }

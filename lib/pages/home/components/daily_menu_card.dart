@@ -7,7 +7,7 @@ import 'until_lunch_timer.dart';
 class DailyMenuCard extends StatelessWidget {
   final Day today;
 
-  DailyMenuCard({Key? key, required this.today}) : super(key: key);
+  const DailyMenuCard({Key? key, required this.today}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

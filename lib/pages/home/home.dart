@@ -41,18 +41,30 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                   Text("menuCacheValid: $cacheValid"),
                   const ElevatedButton(
                       onPressed: MenuRepository.clearCache,
-                      child: FittedBox(child: Text("MenuRepository.clearCache()"))),
+                      child: FittedBox(
+                          child: Text("MenuRepository.clearCache()"))),
                   ElevatedButton(
-                      onPressed: () => launchUrl(MenuRepository.menuUri, mode: LaunchMode.externalApplication),
+                      onPressed: () => launchUrl(MenuRepository.menuUri,
+                          mode: LaunchMode.externalApplication),
                       child: const FittedBox(
-                          child: Text("launchUrl(MenuRepository.menuUri, mode: LaunchMode.externalApplication)"))),
+                          child: Text(
+                              "launchUrl(MenuRepository.menuUri, mode: LaunchMode.externalApplication)"))),
                   ElevatedButton(
-                      onPressed: BlocProvider.of<HomeCubit>(this.context).initializeMenu,
-                      child: const FittedBox(child: Text("BlocProvider.of<HomeCubit>(context).initializeMenu()"))),
-                  const ElevatedButton(onPressed: SystemNavigator.pop, child: Text("Kill process")),
+                      onPressed: BlocProvider.of<HomeCubit>(this.context)
+                          .initializeMenu,
+                      child: const FittedBox(
+                          child: Text(
+                              "BlocProvider.of<HomeCubit>(context).initializeMenu()"))),
+                  const ElevatedButton(
+                      onPressed: SystemNavigator.pop,
+                      child: Text("Kill process")),
                 ],
               ),
-              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("OK"))
+              ],
             );
           });
     }
@@ -71,19 +83,23 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("YAZILIMCI", style: Theme.of(context).textTheme.labelSmall),
+                  Text("YAZILIMCI",
+                      style: Theme.of(context).textTheme.labelSmall),
                   const Text("Koray Öztürkler"),
                   const SizedBox(height: 10),
                   Text("SÜRÜM", style: Theme.of(context).textTheme.labelSmall),
                   Text("v${pkgInfo.version}"),
                   const SizedBox(height: 10),
-                  Text("SDK SÜRÜMÜ", style: Theme.of(context).textTheme.labelSmall),
+                  Text("SDK SÜRÜMÜ",
+                      style: Theme.of(context).textTheme.labelSmall),
                   const SizedBox(height: 5),
                   Row(
                     children: [
                       SvgPicture.asset(
                         "assets/flutter.svg",
-                        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                            Theme.of(context).colorScheme.onSurface,
+                            BlendMode.srcIn),
                         height: 20,
                       ),
                       const SizedBox(width: 10),
@@ -102,7 +118,9 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                       _showDebugDialog();
                     },
                     child: const Text("DEBUG")),
-                TextButton(onPressed: () => Navigator.pop(context), child: const Text("TAMAM"))
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("TAMAM"))
               ],
             );
           });
@@ -115,7 +133,9 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       appBar: AppBar(
         title: const Text("TED Yemek Menüsü"),
         actions: [
-          IconButton(onPressed: _showAboutDialog, icon: const Icon(Icons.info_outline)),
+          IconButton(
+              onPressed: _showAboutDialog,
+              icon: const Icon(Icons.info_outline)),
         ],
       ),
       body: BlocBuilder<HomeCubit, HomeState>(
@@ -132,6 +152,11 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
             return Container();
           }
         },
+      ),
+      floatingActionButton: const FloatingActionButton.extended(
+        icon: Icon(Icons.favorite),
+        label: Text("Favoriler"),
+        onPressed: null,
       ),
     );
   }
