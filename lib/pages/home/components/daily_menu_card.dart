@@ -6,11 +6,8 @@ import 'until_lunch_timer.dart';
 
 class DailyMenuCard extends StatelessWidget {
   final Day today;
-  final Duration? timeUntilLunch;
 
-  DailyMenuCard({Key? key, required this.today})
-      : timeUntilLunch = today.durationUntilLunch(),
-        super(key: key);
+  DailyMenuCard({Key? key, required this.today}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +37,7 @@ class DailyMenuCard extends StatelessWidget {
             ),
             for (var dish in today.dishes) DishCard(dishName: dish, dense: true),
             const SizedBox(height: 5),
-            timeUntilLunch != null
-                ? UntilLunchTimer(timeUntilLunch!)
-                : Text("YEMEK ZİLİ GEÇMİŞTİR", style: Theme.of(context).textTheme.labelMedium),
+            UntilLunchTimer(today.durationUntilLunch)
           ],
         ),
       ),
