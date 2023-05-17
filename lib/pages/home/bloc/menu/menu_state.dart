@@ -1,6 +1,6 @@
 part of 'menu_cubit.dart';
 
-abstract class MenuState extends Equatable {
+sealed class MenuState extends Equatable {
   const MenuState();
 }
 

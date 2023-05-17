@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ted_yemek/pages/home/bloc/favorites/favorites_cubit.dart';
 import 'package:ted_yemek/repositories/favorites_repository.dart';
 import 'package:ted_yemek/repositories/menu_repository.dart';
 
@@ -41,8 +42,11 @@ class MyApp extends StatelessWidget {
             RepositoryProvider<MenuRepository>(create: (_) => MenuRepository()),
             RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository())
           ],
-          child: BlocProvider(
-            create: (context) => MenuCubit(context.read<MenuRepository>()),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
+              BlocProvider<FavoritesCubit>(create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
+            ],
             child: const Home(),
           ),
         ),

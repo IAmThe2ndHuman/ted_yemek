@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/menu.dart';
@@ -12,7 +11,7 @@ class MenuView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var today = kDebugMode ? menu.days[0] : menu.today;
+    var today = menu.today;
     return ListView(
       children: [
         Text("${menu.mondayDate} ve sonrası için menü",

@@ -22,7 +22,8 @@ class Menu {
 
     List<Day> menu = [];
     days.forEach((key, value) {
-      var dishes = value.getElementsByClassName("tablo").map((e) => e.text.trim());
+      var dishes =
+          value.getElementsByClassName("tablo").map((e) => e.text.trim());
       menu.add(Day(dishes.toList(), key + 1));
     });
 
