@@ -24,6 +24,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with AfterLayoutMixin {
   int _view = 0;
+  bool _showFab = false;
 
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) async {
@@ -172,49 +173,60 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
     ][_view];
   }
 
+  Future<void> _toggleFab(FavoritesState state) async {
+    _showFab = (await state.favorites).isNotEmpty && _view == 1;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("TED Yemek Menüsü"),
-        actions: [
-          IconButton(
-              onPressed: _showAboutDialog,
-              icon: const Icon(Icons.info_outline)),
-        ],
+    return BlocListener<FavoritesCubit, FavoritesState>(
+      listener: (context, state) => _toggleFab(state),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("TED Yemek Menüsü"),
+          actions: [
+            IconButton(
+                onPressed: _showAboutDialog,
+                icon: const Icon(Icons.info_outline)),
+          ],
+        ),
+        body: PageTransitionSwitcher(
+          duration: const Duration(milliseconds: 400),
+          transitionBuilder: ((child, primaryAnimation, secondaryAnimation) =>
+              FadeThroughTransition(
+                animation: primaryAnimation,
+                secondaryAnimation: secondaryAnimation,
+                fillColor: Theme.of(context).colorScheme.surface,
+                child: child,
+              )),
+          child: _viewBuilder(),
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _view,
+          onDestinationSelected: (view) {
+            _view = view;
+            _toggleFab(context.read<FavoritesCubit>().state);
+          },
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.restaurant_menu_outlined),
+              selectedIcon: Icon(Icons.restaurant_menu),
+              label: "Menü",
+            ),
+            NavigationDestination(
+                icon: Icon(Icons.favorite_border),
+                selectedIcon: Icon(Icons.favorite),
+                label: "Favoriler"),
+          ],
+        ),
+        floatingActionButton: _showFab
+            ? FloatingActionButton(
+                onPressed: _showClearFavoritesDialog,
+                child: const Icon(Icons.delete_forever),
+              )
+            : null,
       ),
-      body: PageTransitionSwitcher(
-        duration: const Duration(milliseconds: 400),
-        transitionBuilder: ((child, primaryAnimation, secondaryAnimation) =>
-            FadeThroughTransition(
-              animation: primaryAnimation,
-              secondaryAnimation: secondaryAnimation,
-              fillColor: Theme.of(context).colorScheme.surface,
-              child: child,
-            )),
-        child: _viewBuilder(),
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _view,
-        onDestinationSelected: (view) => setState(() => _view = view),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.restaurant_menu_outlined),
-            selectedIcon: Icon(Icons.restaurant_menu),
-            label: "Menü",
-          ),
-          NavigationDestination(
-              icon: Icon(Icons.favorite_border),
-              selectedIcon: Icon(Icons.favorite),
-              label: "Favoriler"),
-        ],
-      ),
-      floatingActionButton: _view == 1
-          ? FloatingActionButton(
-              onPressed: _showClearFavoritesDialog,
-              child: const Icon(Icons.delete_forever),
-            )
-          : null,
     );
   }
 }
