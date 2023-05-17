@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ted_yemek/repositories/favorites_repository.dart';
 
 import '../bloc/favorites/favorites_cubit.dart';
 

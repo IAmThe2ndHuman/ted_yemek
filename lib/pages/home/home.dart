@@ -6,14 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:ted_yemek/pages/home/bloc/favorites/favorites_cubit.dart';
-import 'package:ted_yemek/pages/home/views/favorites_view.dart';
-import 'package:ted_yemek/repositories/favorites_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repositories/menu_repository.dart';
+import 'bloc/favorites/favorites_cubit.dart';
 import 'bloc/menu/menu_cubit.dart';
 import 'views/error_view.dart';
+import 'views/favorites_view.dart';
 import 'views/menu_view.dart';
 
 class Home extends StatefulWidget {
@@ -212,8 +211,8 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       ),
       floatingActionButton: _view == 1
           ? FloatingActionButton(
-              child: const Icon(Icons.delete_forever),
               onPressed: _showClearFavoritesDialog,
+              child: const Icon(Icons.delete_forever),
             )
           : null,
     );

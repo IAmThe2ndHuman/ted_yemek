@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:ted_yemek/pages/home/components/dish_card.dart';
+
+import '../components/dish_card.dart';
 
 class FavoritesView extends StatelessWidget {
   final Future<List<String>> favorites;
@@ -18,11 +19,11 @@ class FavoritesView extends StatelessWidget {
             size: 60,
           ),
           const SizedBox(height: 10),
-          Text("Placeholder",
+          Text("Favori Bulunmamaktadır",
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 20),
-          Text("hi", textAlign: TextAlign.center),
+          const Text("description", textAlign: TextAlign.center),
         ]),
       ),
     );
