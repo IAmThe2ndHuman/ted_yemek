@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:after_layout/after_layout.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ted_yemek/pages/home/bloc/favorites/favorites_cubit.dart';
+import 'package:ted_yemek/pages/home/views/favorites_view.dart';
 import 'package:ted_yemek/repositories/favorites_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -125,6 +128,28 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
     }
   }
 
+  void _showClearFavoritesDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Tüm favorilerini silme"),
+            content: const Text("Tüm favorilerinizi silmek ister misiniz?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    this.context.read<FavoritesCubit>().clearFavorites();
+                  },
+                  child: const Text("EVET, SİL")),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("HAYIR"))
+            ],
+          );
+        });
+  }
+
   Widget _viewBuilder() {
     return [
       BlocBuilder<MenuCubit, MenuState>(
@@ -142,7 +167,9 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
           }
         },
       ),
-      Placeholder(),
+      BlocBuilder<FavoritesCubit, FavoritesState>(
+        builder: (context, state) => FavoritesView(favorites: state.favorites),
+      ),
     ][_view];
   }
 
@@ -157,7 +184,17 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               icon: const Icon(Icons.info_outline)),
         ],
       ),
-      body: _viewBuilder(),
+      body: PageTransitionSwitcher(
+        duration: const Duration(milliseconds: 400),
+        transitionBuilder: ((child, primaryAnimation, secondaryAnimation) =>
+            FadeThroughTransition(
+              animation: primaryAnimation,
+              secondaryAnimation: secondaryAnimation,
+              fillColor: Theme.of(context).colorScheme.surface,
+              child: child,
+            )),
+        child: _viewBuilder(),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _view,
         onDestinationSelected: (view) => setState(() => _view = view),
@@ -173,6 +210,12 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               label: "Favoriler"),
         ],
       ),
+      floatingActionButton: _view == 1
+          ? FloatingActionButton(
+              child: const Icon(Icons.delete_forever),
+              onPressed: _showClearFavoritesDialog,
+            )
+          : null,
     );
   }
 }

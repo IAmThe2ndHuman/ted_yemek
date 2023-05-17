@@ -35,7 +35,8 @@ class FavoritesRepository {
     (await _prefs).setStringList(_favorites, _favoriteDishesCache!);
   }
 
-  Future<bool> isFavorite(String dishName) async {
-    return (await favoriteDishes).contains(dishName);
+  Future<void> clearFavorites() async {
+    _favoriteDishesCache?.clear();
+    (await _prefs).remove(_favorites);
   }
 }

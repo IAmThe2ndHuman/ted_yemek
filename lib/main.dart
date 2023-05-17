@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         ),
         home: MultiRepositoryProvider(
           providers: [
-            // WOULD IT MAKE MORE SENSE TO JUST HAVE ONE SHAREDPREFS REPOSITORY AND PASS _PREFS TO THE OTHERS???
+            // WOULD IT MAKE MORE SENSE TO JUST HAVE ONE SHAREDPREFS REPOSITORY AND PASS PREFS TO THE OTHERS???
             RepositoryProvider<MenuRepository>(create: (_) => MenuRepository()),
             RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository())
           ],

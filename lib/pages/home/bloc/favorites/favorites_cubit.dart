@@ -20,4 +20,9 @@ class FavoritesCubit extends Cubit<FavoritesState> {
     await _favoritesRepository.removeFavorite(dishName);
     emit(FavoriteRemoved(_favoritesRepository.favoriteDishes, dishName));
   }
+
+  Future<void> clearFavorites() async {
+    await _favoritesRepository.clearFavorites();
+    emit(FavoritesInitial(_favoritesRepository.favoriteDishes));
+  }
 }
