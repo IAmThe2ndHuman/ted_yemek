@@ -3,20 +3,21 @@ import 'package:equatable/equatable.dart';
 import 'package:ted_yemek/models/error.dart';
 import 'package:ted_yemek/repositories/menu_repository.dart';
 
-import '../../../models/menu.dart';
+import '../../../../models/menu.dart';
 
-part 'home_state.dart';
+part 'menu_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeInitial());
+class MenuCubit extends Cubit<MenuState> {
+  final MenuRepository _menuRepository;
+  MenuCubit(this._menuRepository) : super(const MenuInitial());
 
   Future<void> initializeMenu() async {
-    emit(const HomeLoadingMenu());
+    emit(const LoadingMenu());
     try {
-      var menu = Menu.parseHtml(await MenuRepository.getMenuHtml());
-      emit(HomeMenuAcquired(menu));
+      var menu = Menu.parseHtml(await _menuRepository.getMenuHtml());
+      emit(MenuAcquired(menu));
     } catch (e) {
-      emit(HomeError(AppError(
+      emit(MenuError(AppError(
           "Bağlantı veya önbellek hatası",
           "Menüyü görebilmek için internete bağlanmanız "
               "gerekmektedir. Bir kez bağlandıktan sonra bu haftanın menüsünü internetsiz görebileceksiniz.\n\nİnternete "

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../models/error.dart';
-import '../bloc/home_cubit.dart';
+import '../bloc/menu/menu_cubit.dart';
 
 class ErrorView extends StatelessWidget {
   final AppError error;
@@ -23,7 +23,9 @@ class ErrorView extends StatelessWidget {
               size: 60,
             ),
             const SizedBox(height: 10),
-            Text(error.title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
+            Text(error.title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 20),
             Text(error.description, textAlign: TextAlign.center),
             const SizedBox(height: 20),
@@ -31,7 +33,7 @@ class ErrorView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton.icon(
-                  onPressed: BlocProvider.of<HomeCubit>(context).initializeMenu,
+                  onPressed: context.read<MenuCubit>().initializeMenu,
                   icon: const Icon(Icons.refresh),
                   label: const Text("Yenile"),
                 ),
@@ -45,7 +47,9 @@ class ErrorView extends StatelessWidget {
                                 title: const Text("Hata Detayları"),
                                 content: Text(error.details!),
                                 actions: [
-                                  TextButton(onPressed: () => Navigator.pop(context), child: const Text("TAMAM"))
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("TAMAM"))
                                 ],
                               );
                             })

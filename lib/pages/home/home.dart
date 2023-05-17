@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ted_yemek/repositories/favorites_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repositories/menu_repository.dart';
-import 'bloc/home_cubit.dart';
+import 'bloc/menu/menu_cubit.dart';
 import 'views/error_view.dart';
 import 'views/menu_view.dart';
 
@@ -21,13 +21,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with AfterLayoutMixin {
+  int _view = 0;
+
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) async {
-    await BlocProvider.of<HomeCubit>(context).initializeMenu();
+    await context.read<MenuCubit>().initializeMenu();
   }
 
   Future<void> _showDebugDialog() async {
-    var cacheValid = await MenuRepository.menuCacheValid;
+    var cacheValid = await context.read<MenuRepository>().menuCacheValid;
     if (mounted) {
       await showDialog(
           context: context,
@@ -39,9 +41,9 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text("menuCacheValid: $cacheValid"),
-                  const ElevatedButton(
-                      onPressed: MenuRepository.clearCache,
-                      child: FittedBox(
+                  ElevatedButton(
+                      onPressed: this.context.read<MenuRepository>().clearCache,
+                      child: const FittedBox(
                           child: Text("MenuRepository.clearCache()"))),
                   ElevatedButton(
                       onPressed: () => launchUrl(MenuRepository.menuUri,
@@ -50,14 +52,10 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                           child: Text(
                               "launchUrl(MenuRepository.menuUri, mode: LaunchMode.externalApplication)"))),
                   ElevatedButton(
-                      onPressed: BlocProvider.of<HomeCubit>(this.context)
-                          .initializeMenu,
+                      onPressed: this.context.read<MenuCubit>().initializeMenu,
                       child: const FittedBox(
                           child: Text(
-                              "BlocProvider.of<HomeCubit>(context).initializeMenu()"))),
-                  const ElevatedButton(
-                      onPressed: SystemNavigator.pop,
-                      child: Text("Kill process")),
+                              "context.read<HomeCubit>().initializeMenu()"))),
                 ],
               ),
               actions: [
@@ -127,6 +125,27 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
     }
   }
 
+  Widget _viewBuilder() {
+    return [
+      BlocBuilder<MenuCubit, MenuState>(
+        builder: (context, state) {
+          if (state is MenuInitial) {
+            return Container();
+          } else if (state is LoadingMenu) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is MenuAcquired) {
+            return MenuView(menu: state.menu);
+          } else if (state is MenuError) {
+            return ErrorView(error: state.error);
+          } else {
+            return Container();
+          }
+        },
+      ),
+      Placeholder(),
+    ][_view];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,25 +157,21 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               icon: const Icon(Icons.info_outline)),
         ],
       ),
-      body: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          if (state is HomeInitial) {
-            return Container();
-          } else if (state is HomeLoadingMenu) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is HomeMenuAcquired) {
-            return MenuView(menu: state.menu);
-          } else if (state is HomeError) {
-            return ErrorView(error: state.error);
-          } else {
-            return Container();
-          }
-        },
-      ),
-      floatingActionButton: const FloatingActionButton.extended(
-        icon: Icon(Icons.favorite),
-        label: Text("Favoriler"),
-        onPressed: null,
+      body: _viewBuilder(),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _view,
+        onDestinationSelected: (view) => setState(() => _view = view),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.restaurant_menu_outlined),
+            selectedIcon: Icon(Icons.restaurant_menu),
+            label: "Menü",
+          ),
+          NavigationDestination(
+              icon: Icon(Icons.favorite_border),
+              selectedIcon: Icon(Icons.favorite),
+              label: "Favoriler"),
+        ],
       ),
     );
   }

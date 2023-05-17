@@ -2,8 +2,10 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ted_yemek/repositories/favorites_repository.dart';
+import 'package:ted_yemek/repositories/menu_repository.dart';
 
-import 'pages/home/bloc/home_cubit.dart';
+import 'pages/home/bloc/menu/menu_cubit.dart';
 import 'pages/home/home.dart';
 
 void main() async {
@@ -33,9 +35,16 @@ class MyApp extends StatelessWidget {
           colorScheme: dark ?? ThemeData.dark().colorScheme,
           cardColor: dark?.onSurface,
         ),
-        home: BlocProvider(
-          create: (context) => HomeCubit(),
-          child: const Home(),
+        home: MultiRepositoryProvider(
+          providers: [
+            // WOULD IT MAKE MORE SENSE TO JUST HAVE ONE SHAREDPREFS REPOSITORY AND PASS _PREFS TO THE OTHERS???
+            RepositoryProvider<MenuRepository>(create: (_) => MenuRepository()),
+            RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository())
+          ],
+          child: BlocProvider(
+            create: (context) => MenuCubit(context.read<MenuRepository>()),
+            child: const Home(),
+          ),
         ),
       );
     });
