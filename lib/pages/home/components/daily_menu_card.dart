@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../models/day.dart';
 import 'dish_card.dart';
@@ -28,7 +29,7 @@ class DailyMenuCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  today.dayOfTheWeek,
+                  DateFormat("EEEE", "tr_TR").format(today.date),
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Theme.of(context).textTheme.titleLarge?.color?.withOpacity(0.5),
                       ),

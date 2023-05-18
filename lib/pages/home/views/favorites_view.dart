@@ -19,9 +19,7 @@ class FavoritesView extends StatelessWidget {
             size: 60,
           ),
           const SizedBox(height: 10),
-          Text("Favori Bulunmamaktadır",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge),
+          Text("Favori Bulunmamaktadır", textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 20),
           const Text("description", textAlign: TextAlign.center),
         ]),
@@ -40,10 +38,7 @@ class FavoritesView extends StatelessWidget {
             return _errorBuilder(context);
           } else {
             return ListView(
-              children: [
-                for (var dishName in snapshot.data!)
-                  DishCard(dishName: dishName)
-              ],
+              children: [for (var dishName in snapshot.data!) DishCard(dishName: dishName)],
             );
           }
         });

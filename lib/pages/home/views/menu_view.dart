@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../models/menu.dart';
 import '../components/daily_menu_card.dart';
@@ -11,14 +12,15 @@ class MenuView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var today = menu.today;
+    final today = menu.today;
+
     return ListView(
       children: [
-        Text("${menu.mondayDate} ve sonrası için menü",
+        Text("${DateFormat("d MMMM", "tr_TR").format(menu.days.first.date)} ve sonrası için menü",
             textAlign: TextAlign.center, style: Theme.of(context).textTheme.labelSmall),
         if (today != null) DailyMenuCard(today: today),
         for (var day in menu.days) ...[
-          DayTile(dayOfTheWeek: day.dayOfTheWeek),
+          DayTile(dayOfTheWeek: DateFormat("EEEE", "tr_TR").format(day.date)),
           for (var dish in day.dishes) DishCard(dishName: dish)
         ]
       ],

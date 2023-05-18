@@ -3,8 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // TODO: maybe add the List<String>? _favoriteDishes; thing here too
 class MenuRepository {
-  static final Uri menuUri = Uri.https(
-      "www.tedistanbul.com.tr", "/sofra/MobilHaftalik.aspx", {"school": "3"});
+  static final Uri menuUri = Uri.https("www.tedistanbul.com.tr", "/sofra/MobilHaftalik.aspx", {"school": "3"});
   static const String _cache = "cache.html";
   static const String _cacheExpr = "cache.html.expiration";
 
@@ -14,8 +13,7 @@ class MenuRepository {
     var now = DateTime.now();
     var cacheExpiration = (await _prefs).getInt(_cacheExpr); // EPOCH (MS)
 
-    if (cacheExpiration != null &&
-        cacheExpiration > now.millisecondsSinceEpoch) {
+    if (cacheExpiration != null && cacheExpiration > now.millisecondsSinceEpoch) {
       var htmlCache = (await _prefs).getString(_cache);
       if (htmlCache != null) return htmlCache;
     }
@@ -23,14 +21,8 @@ class MenuRepository {
     var html = await _fetchMenuHtml();
     (await _prefs).setString(_cache, html);
 
-    var expirationDate = now.add(Duration(days: 8 - now.weekday)).subtract(
-        Duration(
-            hours: now.hour,
-            minutes: now.minute,
-            seconds: now.second,
-            milliseconds: now.millisecond));
-    await (await _prefs).setInt(
-        "cache.html.expiration", expirationDate.millisecondsSinceEpoch);
+    var expirationDate = DateTime(now.year, now.month, now.day).add(Duration(days: 8 - now.weekday));
+    await (await _prefs).setInt("cache.html.expiration", expirationDate.millisecondsSinceEpoch);
 
     return html;
   }

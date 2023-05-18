@@ -1,23 +1,6 @@
 class Day {
-  final int dayNumber;
+  final DateTime date;
   final List<String> dishes;
-
-  String get dayOfTheWeek {
-    switch (dayNumber) {
-      case 1:
-        return "Pazartesi";
-      case 2:
-        return "Salı";
-      case 3:
-        return "Çarşamba";
-      case 4:
-        return "Perşembe";
-      case 5:
-        return "Cuma";
-      default:
-        return "???";
-    }
-  }
 
   Duration? durationUntilLunch() {
     var now = DateTime.now();
@@ -30,10 +13,5 @@ class Day {
     return lunchtime.difference(now);
   }
 
-  Day(this.dishes, this.dayNumber);
-
-  @override
-  String toString() {
-    return "$dayNumber ($dayOfTheWeek) : $dishes";
-  }
+  const Day(this.dishes, this.date);
 }
