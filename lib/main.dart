@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:ted_yemek/pages/home/bloc/favorites/favorites_cubit.dart';
-import 'package:ted_yemek/repositories/favorites_repository.dart';
-import 'package:ted_yemek/repositories/menu_repository.dart';
-import 'package:ted_yemek/services/isolate_service.dart';
-import 'package:ted_yemek/services/notification_service.dart';
 
+import 'pages/home/bloc/favorites/favorites_cubit.dart';
 import 'pages/home/bloc/menu/menu_cubit.dart';
+import 'pages/home/bloc/reminder/reminder_cubit.dart';
 import 'pages/home/home.dart';
+import 'repositories/favorites_repository.dart';
+import 'repositories/menu_repository.dart';
+import 'services/isolate_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDateFormatting("tr_TR");
 
-  await NotificationService.initialize();
   await IsolateService.initialize();
 
   await SystemChrome.setPreferredOrientations([
@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
             providers: [
               BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
               BlocProvider<FavoritesCubit>(create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
+              BlocProvider<ReminderCubit>(create: (context) => ReminderCubit()),
             ],
             child: const Home(),
           ),

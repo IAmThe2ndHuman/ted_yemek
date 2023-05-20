@@ -1,11 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../components/dish_tile.dart';
 
 class FavoritesView extends StatelessWidget {
-  final Future<List<String>> favorites;
+  final List<String> favorites;
   const FavoritesView({super.key, required this.favorites});
 
   Widget _errorBuilder(BuildContext context) {
@@ -29,18 +27,9 @@ class FavoritesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-        future: favorites,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.data!.isEmpty) {
-            return _errorBuilder(context);
-          } else {
-            return ListView(
-              children: [for (var dishName in snapshot.data!) DishTile(dishName: dishName)],
-            );
-          }
-        });
+    if (favorites.isEmpty) return _errorBuilder(context);
+    return ListView(
+      children: [for (var dishName in favorites) DishTile(dishName: dishName)],
+    );
   }
 }

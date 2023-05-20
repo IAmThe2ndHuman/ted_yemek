@@ -1,18 +1,29 @@
 part of 'favorites_cubit.dart';
 
 sealed class FavoritesState extends Equatable {
-  final Future<List<String>> favorites;
-  const FavoritesState(this.favorites);
+  const FavoritesState();
+
+  @override
+  List<Object> get props => [];
 }
 
 class FavoritesInitial extends FavoritesState {
-  const FavoritesInitial(super.favorites);
-
-  @override
-  List<Object> get props => [super.favorites];
+  const FavoritesInitial();
 }
 
-class FavoriteAdded extends FavoritesState {
+class FavoritesLoading extends FavoritesState {
+  const FavoritesLoading();
+}
+
+class FavoritesLoaded extends FavoritesState {
+  final List<String> favorites;
+  const FavoritesLoaded(this.favorites);
+
+  @override
+  List<Object> get props => [favorites];
+}
+
+class FavoriteAdded extends FavoritesLoaded {
   final String addedDish;
   const FavoriteAdded(super.favorites, this.addedDish);
 
@@ -20,7 +31,7 @@ class FavoriteAdded extends FavoritesState {
   List<Object> get props => [super.favorites, addedDish];
 }
 
-class FavoriteRemoved extends FavoritesState {
+class FavoriteRemoved extends FavoritesLoaded {
   final String removedDish;
   const FavoriteRemoved(super.favorites, this.removedDish);
 

@@ -12,10 +12,10 @@ class MenuCubit extends Cubit<MenuState> {
   MenuCubit(this._menuRepository) : super(const MenuInitial());
 
   Future<void> initializeMenu() async {
-    emit(const LoadingMenu());
+    emit(const MenuLoading());
     try {
       var menu = Menu.parseHtml(await _menuRepository.getMenuHtml());
-      emit(MenuAcquired(menu));
+      emit(MenuLoaded(menu));
     } catch (e) {
       emit(MenuError(AppError(
           "Bağlantı veya önbellek hatası",

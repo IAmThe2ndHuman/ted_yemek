@@ -2,25 +2,22 @@ part of 'menu_cubit.dart';
 
 sealed class MenuState extends Equatable {
   const MenuState();
+
+  @override
+  List<Object> get props => [];
 }
 
 class MenuInitial extends MenuState {
   const MenuInitial();
-
-  @override
-  List<Object> get props => [];
 }
 
-class LoadingMenu extends MenuState {
-  const LoadingMenu();
-
-  @override
-  List<Object> get props => [];
+class MenuLoading extends MenuState {
+  const MenuLoading();
 }
 
-class MenuAcquired extends MenuState {
+class MenuLoaded extends MenuState {
   final Menu menu;
-  const MenuAcquired(this.menu);
+  const MenuLoaded(this.menu);
 
   @override
   List<Object> get props => [menu];

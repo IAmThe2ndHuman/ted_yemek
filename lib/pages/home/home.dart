@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:ted_yemek/services/isolate_service.dart';
-import 'package:ted_yemek/services/notification_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ted_yemek/pages/home/bloc/reminder/reminder_cubit.dart';
+import 'package:ted_yemek/pages/home/components/reminder_icon_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repositories/menu_repository.dart';
@@ -33,9 +34,9 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       builder: (context, state) {
         if (state is MenuInitial) {
           return Container();
-        } else if (state is LoadingMenu) {
+        } else if (state is MenuLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is MenuAcquired) {
+        } else if (state is MenuLoaded) {
           return MenuView(menu: state.menu);
         } else if (state is MenuError) {
           return ErrorView(error: state.error);
@@ -45,18 +46,29 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       },
     ),
     BlocBuilder<FavoritesCubit, FavoritesState>(
-      builder: (context, state) => FavoritesView(favorites: state.favorites),
+      // todo integrate into the view itself...or not idk
+      builder: (context, state) {
+        if (state is FavoritesInitial) {
+          return Container();
+        } else if (state is FavoritesLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is FavoritesLoaded) {
+          return FavoritesView(favorites: state.favorites);
+        } else {
+          return Container();
+        }
+      },
     ),
   ];
 
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) async {
-    await context.read<MenuCubit>().initializeMenu();
+    context.read<MenuCubit>().initializeMenu();
+    context.read<FavoritesCubit>().initializeFavorites();
+    context.read<ReminderCubit>().initializeReminder();
   }
 
   Future<void> _showDebugDialog() async {
-    final registeredNotifications = await NotificationService.listScheduledWeeklyFavoriteNotifications();
-    if (!mounted) return;
     final cacheValid = await context.read<MenuRepository>().menuCacheValid;
 
     if (mounted) {
@@ -70,8 +82,6 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text("menuCacheValid: $cacheValid"),
-                  Text(
-                      registeredNotifications.map((e) => "'${e.content?.body}' AT ${e.schedule?.timeZone}").join("\n")),
                   ElevatedButton(
                       onPressed: this.context.read<MenuRepository>().clearCache,
                       child: const FittedBox(child: Text("invalidate cache"))),
@@ -81,11 +91,13 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                   ElevatedButton(
                       onPressed: this.context.read<MenuCubit>().initializeMenu,
                       child: const FittedBox(child: Text("rebuild menu"))),
-                  const ElevatedButton(
-                      onPressed: NotificationService.cancelWeeklyFavoriteNotifications,
-                      child: FittedBox(child: Text("cancel scheduled notifications"))),
-                  const ElevatedButton(
-                      onPressed: IsolateService.cancelAll, child: FittedBox(child: Text("cancel isolate"))),
+                  ElevatedButton(
+                      onPressed: this.context.read<ReminderCubit>().disableReminder,
+                      child: FittedBox(child: Text("cancel all tasks"))),
+                  ElevatedButton(
+                      onPressed: () => setState(() => SharedPreferences.getInstance()
+                          .then((value) => value.remove("data.remindersEnabled.sawDialog"))),
+                      child: FittedBox(child: Text("reset data.remindersEnabled.sawDialog"))),
                 ],
               ),
               actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
@@ -166,64 +178,8 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
   }
 
   Future<void> _toggleFab(FavoritesState state) async {
-    _showFab = (await state.favorites).isNotEmpty && _viewIndex == 1;
+    _showFab = state is FavoritesLoaded && (state.favorites).isNotEmpty && _viewIndex == 1;
     setState(() {});
-  }
-
-  Future<void> _testNotificationPicker() async {
-    var menuState = context.read<MenuCubit>().state;
-
-    if (!mounted) return;
-    await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: const Text("Reminders"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text("This feature will remind you if a dish you like is available on a certain day."),
-                  Card(
-                    margin: const EdgeInsets.only(top: 10),
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    child: const ListTile(
-                      leading: Icon(Icons.info_outline),
-                      subtitle: Text("You will not be able to edit your favorites while this is on."),
-                    ),
-                  ),
-                  Card(
-                    margin: const EdgeInsets.only(top: 10),
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.errorContainer,
-                    child: const ListTile(
-                      leading: Icon(Icons.warning_amber),
-                      subtitle: Text(
-                          "This feature is experimental and may not work all the time. In fact, it will probably break."),
-                    ),
-                  ),
-                ],
-              ),
-              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
-            ));
-    if (await NotificationService.requestNotificationAccess() && menuState is MenuAcquired) {
-      if (!mounted) return;
-      final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-      if (time != null) {
-        if ((time.hour <= 4 || time.hour > 22) && mounted) {
-          await showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    title: const Text("Reminders"),
-                    content: const Text("Please pick a time between 05:00 and 23:00."),
-                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
-                  ));
-        } else {
-          IsolateService.scheduleWeeklyFavoriteNotificationTasks(menuState.menu, time);
-          // todo fix up and track if notifications are scheduled w/ shared prefs
-        }
-      }
-    }
   }
 
   @override
@@ -235,8 +191,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
         appBar: AppBar(
           title: const Text("TED Yemek Menüsü"),
           actions: [
-            if (_viewIndex == 1)
-              IconButton(onPressed: _testNotificationPicker, icon: Icon(Icons.notification_add_outlined)),
+            if (_viewIndex == 1) const ReminderIconButton(),
             IconButton(onPressed: _showAboutDialog, icon: const Icon(Icons.info_outline)),
           ],
         ),

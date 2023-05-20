@@ -34,24 +34,18 @@ class _DishTileState extends State<DishTile> {
         leading: const Icon(Icons.remove),
         trailing: BlocBuilder<FavoritesCubit, FavoritesState>(
           builder: (context, state) {
-            return FutureBuilder<List<String>>(
-              future: state.favorites,
-              builder: (context, snapshot) {
-                // this might be bad code
-                bool favorited;
-                if (state is FavoriteAdded && state.addedDish == widget.dishName) {
-                  favorited = true;
-                } else if (state is FavoriteRemoved && state.removedDish == widget.dishName) {
-                  favorited = false;
-                } else {
-                  favorited = snapshot.data?.contains(widget.dishName) ?? false;
-                }
+            bool favorited = false;
+            if (state is FavoriteAdded && state.addedDish == widget.dishName) {
+              favorited = true;
+              // } else if (state is FavoriteRemoved && state.removedDish == widget.dishName) {
+              //   favorited = false;
+            } else if (state is FavoritesLoaded && state.favorites.contains(widget.dishName)) {
+              favorited = true;
+            }
 
-                return IconButton(
-                    icon: Icon(favorited ? Icons.favorite : Icons.favorite_border),
-                    onPressed: () => toggleFavorite(favorited));
-              },
-            );
+            return IconButton(
+                icon: Icon(favorited ? Icons.favorite : Icons.favorite_border),
+                onPressed: () => toggleFavorite(favorited));
           },
         ));
   }
