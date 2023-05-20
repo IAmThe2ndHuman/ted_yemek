@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../models/day.dart';
 import 'dish_tile.dart';
+import 'no_dishes_card.dart';
 import 'until_lunch_timer.dart';
 
 class DailyMenuCard extends StatelessWidget {
@@ -36,6 +37,7 @@ class DailyMenuCard extends StatelessWidget {
                 ),
               ],
             ),
+            if (today.dishes.isEmpty) NoDishesCard(date: today.date, dense: true),
             for (var dish in today.dishes) DishTile(dishName: dish, dense: true),
             const SizedBox(height: 5),
             UntilLunchTimer(today.durationUntilLunch)
