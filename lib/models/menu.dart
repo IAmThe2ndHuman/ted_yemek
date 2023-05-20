@@ -1,4 +1,5 @@
 import 'package:html/parser.dart';
+import 'package:intl/intl.dart';
 
 import 'day.dart';
 
@@ -47,10 +48,7 @@ class Menu {
     final document = parse(html);
 
     final strong = document.getElementsByTagName("strong");
-    final mondayDateRaw = strong.first.text.trim().split(" "); // DAY, MONTH (EEEE), YEAR
-    final mondayDate =
-        DateTime(int.parse(mondayDateRaw[2]), monthNameToNumber(mondayDateRaw[1]), int.parse(mondayDateRaw[0]), 23, 59);
-
+    final mondayDate = DateFormat("d MMMM yyyy EEEE", "tr_TR").parse(strong.first.text.trim());
     final days = document.getElementsByTagName("div").first.children;
 
     List<Day> menu = [];

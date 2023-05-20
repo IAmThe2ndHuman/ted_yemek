@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../components/dish_card.dart';
+import '../components/dish_tile.dart';
 
 class FavoritesView extends StatelessWidget {
   final Future<List<String>> favorites;
@@ -38,7 +38,7 @@ class FavoritesView extends StatelessWidget {
             return _errorBuilder(context);
           } else {
             return ListView(
-              children: [for (var dishName in snapshot.data!) DishCard(dishName: dishName)],
+              children: [for (var dishName in snapshot.data!) DishTile(dishName: dishName)],
             );
           }
         });

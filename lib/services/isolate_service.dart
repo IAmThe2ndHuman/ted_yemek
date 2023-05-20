@@ -19,7 +19,7 @@ void _callbackDispatcher() {
       final day = Menu.parseHtml(await menuRepo.getMenuHtml()).days[inputData!["weekdayIndex"]];
       final favorites = await favoritesRepo.favoriteDishes;
 
-      var intersection = day.dishes.toSet().intersection(favorites.toSet());
+      final intersection = day.dishes.toSet().intersection(favorites.toSet());
       if (intersection.isNotEmpty) {
         await NotificationService.displayFavoritesNotification(intersection);
       }
@@ -40,7 +40,7 @@ sealed class IsolateService {
   }
 
   // WAS TIRED WHEN I WROTE THIS
-  static Future<void> scheduleWeeklyFavoriteNotificationTasks(Menu menu, List<String> favorites, TimeOfDay time) async {
+  static Future<void> scheduleWeeklyFavoriteNotificationTasks(Menu menu, TimeOfDay time) async {
     final now = DateTime.now();
 
     for (final day in menu.days) {
@@ -48,6 +48,7 @@ sealed class IsolateService {
 
       await Workmanager().registerPeriodicTask(
           "weekly-favorite-notification-${day.date.hashCode}", "weeklyFavoriteNotification",
+          tag: "weekly-favorite-notification-${day.date.hashCode}",
           backoffPolicyDelay: const Duration(minutes: 30),
           backoffPolicy: BackoffPolicy.linear,
           inputData: {"weekdayIndex": day.date.weekday - 1},

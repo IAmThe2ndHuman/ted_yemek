@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/day.dart';
-import 'dish_card.dart';
+import 'dish_tile.dart';
 import 'until_lunch_timer.dart';
 
 class DailyMenuCard extends StatelessWidget {
@@ -13,7 +13,7 @@ class DailyMenuCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 0,
       color: Theme.of(context).colorScheme.surfaceVariant,
       child: Padding(
@@ -36,7 +36,7 @@ class DailyMenuCard extends StatelessWidget {
                 ),
               ],
             ),
-            for (var dish in today.dishes) DishCard(dishName: dish, dense: true),
+            for (var dish in today.dishes) DishTile(dishName: dish, dense: true),
             const SizedBox(height: 5),
             UntilLunchTimer(today.durationUntilLunch)
           ],

@@ -172,7 +172,6 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
 
   Future<void> _testNotificationPicker() async {
     var menuState = context.read<MenuCubit>().state;
-    var favorites = await context.read<FavoritesCubit>().state.favorites;
 
     if (!mounted) return;
     await showDialog(
@@ -220,7 +219,8 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                     actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
                   ));
         } else {
-          NotificationService.scheduleWeeklyFavoriteNotifications(menuState.menu, favorites, time);
+          IsolateService.scheduleWeeklyFavoriteNotificationTasks(menuState.menu, time);
+          // todo fix up and track if notifications are scheduled w/ shared prefs
         }
       }
     }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:ted_yemek/pages/home/components/no_dishes_card.dart';
 
 import '../../../models/menu.dart';
 import '../components/daily_menu_card.dart';
 import '../components/day_tile.dart';
-import '../components/dish_card.dart';
+import '../components/dish_tile.dart';
 
 class MenuView extends StatelessWidget {
   final Menu menu;
@@ -16,12 +16,11 @@ class MenuView extends StatelessWidget {
 
     return ListView(
       children: [
-        Text("${DateFormat("d MMMM", "tr_TR").format(menu.days.first.date)} ve sonrası için menü",
-            textAlign: TextAlign.center, style: Theme.of(context).textTheme.labelSmall),
         if (today != null) DailyMenuCard(today: today),
-        for (var day in menu.days) ...[
-          DayTile(dayOfTheWeek: DateFormat("EEEE", "tr_TR").format(day.date)),
-          for (var dish in day.dishes) DishCard(dishName: dish)
+        for (final day in menu.days) ...[
+          DayTile(date: day.date),
+          if (day.dishes.isEmpty) NoDishesCard(date: day.date),
+          for (final dish in day.dishes) DishTile(dishName: dish)
         ]
       ],
     );
