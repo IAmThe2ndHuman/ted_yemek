@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 
-sealed class NotificationService {
-  @pragma("vm:entry-point")
-  static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {}
+@pragma("vm:entry-point")
+Future<void> _onActionReceivedMethod(ReceivedAction receivedAction) async {}
 
+sealed class NotificationService {
   static Future<void> initialize() async {
     await AwesomeNotifications().initialize(
         null,
@@ -21,7 +21,7 @@ sealed class NotificationService {
   }
 
   static Future<void> setListeners() async {
-    AwesomeNotifications().setListeners(onActionReceivedMethod: onActionReceivedMethod);
+    AwesomeNotifications().setListeners(onActionReceivedMethod: _onActionReceivedMethod);
   }
 
   static Future<bool> requestNotificationAccess() async {
@@ -29,18 +29,6 @@ sealed class NotificationService {
       return await AwesomeNotifications().requestPermissionToSendNotifications();
     }
     return true;
-  }
-
-  static Future<void> cancelWeeklyFavoriteNotifications() async {
-    await AwesomeNotifications().cancelAllSchedules();
-  }
-
-  static Future<List<NotificationModel>> listScheduledWeeklyFavoriteNotifications() async {
-    return await AwesomeNotifications().listScheduledNotifications();
-  }
-
-  static Future<void> cancelNotification(int id) async {
-    await AwesomeNotifications().cancelSchedule(id);
   }
 
   static Future<void> displayFavoritesNotification(Set<String> intersection) async {

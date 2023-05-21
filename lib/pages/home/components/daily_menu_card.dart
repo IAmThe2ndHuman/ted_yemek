@@ -38,7 +38,7 @@ class DailyMenuCard extends StatelessWidget {
               ],
             ),
             if (today.dishes.isEmpty) NoDishesCard(date: today.date, dense: true),
-            for (var dish in today.dishes) DishTile(dishName: dish, dense: true),
+            for (final dish in today.dishes) DishTile(dishName: dish, dense: true),
             const SizedBox(height: 5),
             UntilLunchTimer(today.durationUntilLunch)
           ],

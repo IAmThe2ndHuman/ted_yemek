@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:ted_yemek/models/error.dart';
-import 'package:ted_yemek/repositories/menu_repository.dart';
 
+import '../../../../models/error.dart';
 import '../../../../models/menu.dart';
+import '../../../../repositories/menu_repository.dart';
 
 part 'menu_state.dart';
 
@@ -14,8 +14,7 @@ class MenuCubit extends Cubit<MenuState> {
   Future<void> initializeMenu() async {
     emit(const MenuLoading());
     try {
-      var menu = Menu.parseHtml(await _menuRepository.getMenuHtml());
-      emit(MenuLoaded(menu));
+      emit(MenuLoaded(Menu.parseHtml(await _menuRepository.getMenuHtml())));
     } catch (e) {
       emit(MenuError(AppError(
           "Bağlantı veya önbellek hatası",

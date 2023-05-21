@@ -12,18 +12,18 @@ class MenuRepository {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future<String> getMenuHtml() async {
-    var now = DateTime.now();
-    var cacheExpiration = (await _prefs).getInt(_cacheExpr); // EPOCH (MS)
+    final now = DateTime.now();
+    final cacheExpiration = (await _prefs).getInt(_cacheExpr); // EPOCH (MS)
 
     if (cacheExpiration != null && cacheExpiration > now.millisecondsSinceEpoch) {
-      var htmlCache = (await _prefs).getString(_cache);
+      final htmlCache = (await _prefs).getString(_cache);
       if (htmlCache != null) return htmlCache;
     }
 
-    var html = await _fetchMenuHtml();
+    final html = await _fetchMenuHtml();
     (await _prefs).setString(_cache, html);
 
-    var expirationDate = DateTime(now.year, now.month, now.day).add(Duration(days: 8 - now.weekday));
+    final expirationDate = DateTime(now.year, now.month, now.day).add(Duration(days: 8 - now.weekday));
     await (await _prefs).setInt("cache.html.expiration", expirationDate.millisecondsSinceEpoch);
 
     return html;
@@ -35,19 +35,17 @@ class MenuRepository {
   }
 
   Future<bool> get menuCacheValid async {
-    var cacheExpiration = (await _prefs).getInt(_cacheExpr);
+    final cacheExpiration = (await _prefs).getInt(_cacheExpr);
     if (cacheExpiration == null) return false;
 
-    var now = DateTime.now();
+    final now = DateTime.now();
 
     return cacheExpiration > now.millisecondsSinceEpoch;
   }
 
   static Future<String> _fetchMenuHtml() async {
-    var response = await http.get(menuUri);
+    final response = await http.get(menuUri);
     return response.body;
-
-    // return html; // todo dev
   }
 }
 

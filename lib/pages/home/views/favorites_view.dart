@@ -29,7 +29,7 @@ class FavoritesView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (favorites.isEmpty) return _errorBuilder(context);
     return ListView(
-      children: [for (var dishName in favorites) DishTile(dishName: dishName)],
+      children: [for (final dishName in favorites) DishTile(dishName: dishName)],
     );
   }
 }

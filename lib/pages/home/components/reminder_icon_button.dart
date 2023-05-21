@@ -66,7 +66,7 @@ class ReminderIconButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text("Beğendiğiniz bir yemek belirli bir günde mevcut ise, size hatırlatılacaktır."),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     "HATIRLATILACAK SAAT",
                     style: Theme.of(context).textTheme.labelMedium,
@@ -80,11 +80,11 @@ class ReminderIconButton extends StatelessWidget {
                           IconButton(
                               onPressed: () => Navigator.pop(context, _ReminderButtonBehavior.edit),
                               tooltip: "Düzenle",
-                              icon: Icon(Icons.edit_outlined)),
+                              icon: const Icon(Icons.edit_outlined)),
                           IconButton(
                               onPressed: () => Navigator.pop(context, _ReminderButtonBehavior.disable),
                               tooltip: "Kapat",
-                              icon: Icon(Icons.delete_outline))
+                              icon: const Icon(Icons.delete_outline))
                         ],
                       )
                     ],
@@ -103,8 +103,8 @@ class ReminderIconButton extends StatelessWidget {
               context: context,
               builder: (context) => AlertDialog(
                     title: const Text("Bildirimleri Kapatmak"),
-                    icon: Icon(Icons.notifications_active_outlined),
-                    content: Text("Bildirimleri kapatmak istediğinizden emin misiniz?"),
+                    icon: const Icon(Icons.notifications_active_outlined),
+                    content: const Text("Bildirimleri kapatmak istediğinizden emin misiniz?"),
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(context, _ReminderButtonBehavior.disable),

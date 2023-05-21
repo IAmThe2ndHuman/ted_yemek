@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ted_yemek/pages/home/components/no_dishes_card.dart';
 
 import '../../../models/menu.dart';
 import '../components/daily_menu_card.dart';
 import '../components/day_tile.dart';
 import '../components/dish_tile.dart';
+import '../components/no_dishes_card.dart';
 
 class MenuView extends StatelessWidget {
   final Menu menu;

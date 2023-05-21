@@ -7,13 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ted_yemek/pages/home/bloc/reminder/reminder_cubit.dart';
-import 'package:ted_yemek/pages/home/components/reminder_icon_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repositories/menu_repository.dart';
 import 'bloc/favorites/favorites_cubit.dart';
 import 'bloc/menu/menu_cubit.dart';
+import 'bloc/reminder/reminder_cubit.dart';
+import 'components/reminder_icon_button.dart';
 import 'views/error_view.dart';
 import 'views/favorites_view.dart';
 import 'views/menu_view.dart';
@@ -93,11 +93,11 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                       child: const FittedBox(child: Text("rebuild menu"))),
                   ElevatedButton(
                       onPressed: this.context.read<ReminderCubit>().disableReminder,
-                      child: FittedBox(child: Text("cancel all tasks"))),
+                      child: const FittedBox(child: Text("cancel all tasks"))),
                   ElevatedButton(
                       onPressed: () => setState(() => SharedPreferences.getInstance()
                           .then((value) => value.remove("data.remindersEnabled.sawDialog"))),
-                      child: FittedBox(child: Text("reset data.remindersEnabled.sawDialog"))),
+                      child: const FittedBox(child: Text("reset data.remindersEnabled.sawDialog"))),
                 ],
               ),
               actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
@@ -107,7 +107,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
   }
 
   Future<void> _showAboutDialog() async {
-    var pkgInfo = await PackageInfo.fromPlatform();
+    final pkgInfo = await PackageInfo.fromPlatform();
 
     if (mounted) {
       await showDialog(

@@ -5,15 +5,13 @@ import 'package:flutter/material.dart';
 class UntilLunchTimer extends StatefulWidget {
   final Duration? Function() durationUntilLunchCallback;
 
-  const UntilLunchTimer(this.durationUntilLunchCallback, {Key? key})
-      : super(key: key);
+  const UntilLunchTimer(this.durationUntilLunchCallback, {Key? key}) : super(key: key);
 
   @override
   State<UntilLunchTimer> createState() => _UntilLunchTimerState();
 }
 
-class _UntilLunchTimerState extends State<UntilLunchTimer>
-    with WidgetsBindingObserver {
+class _UntilLunchTimerState extends State<UntilLunchTimer> with WidgetsBindingObserver {
   Timer? _timeUntilLunch;
   int? _secondsUntilLunch;
 
@@ -45,24 +43,20 @@ class _UntilLunchTimerState extends State<UntilLunchTimer>
   }
 
   Widget timerBuilder() {
-    var sec = (_secondsUntilLunch! % 60).toString().padLeft(2, "0");
-    var minPre = (_secondsUntilLunch! / 60).floor();
-    var min = (minPre % 60).toString().padLeft(2, "0");
-    var hour = (minPre / 60).floor().toString().padLeft(2, "0");
+    final sec = (_secondsUntilLunch! % 60).toString().padLeft(2, "0");
+    final minPre = (_secondsUntilLunch! / 60).floor();
+    final min = (minPre % 60).toString().padLeft(2, "0");
+    final hour = (minPre / 60).floor().toString().padLeft(2, "0");
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("YEMEĞE KALAN SÜRE",
-            style: Theme.of(context).textTheme.labelMedium),
+        Text("YEMEĞE KALAN SÜRE", style: Theme.of(context).textTheme.labelMedium),
         AnimatedSize(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOutCubic,
           alignment: Alignment.topLeft,
-          child: Text(
-              _secondsUntilLunch == 0
-                  ? "BİRAZDAN ZİL ÇALAR :)"
-                  : "$hour:$min:$sec",
+          child: Text(_secondsUntilLunch == 0 ? "BİRAZDAN ZİL ÇALAR :)" : "$hour:$min:$sec",
               style: Theme.of(context).textTheme.displayMedium),
         ),
       ],
@@ -88,8 +82,7 @@ class _UntilLunchTimerState extends State<UntilLunchTimer>
     if (_secondsUntilLunch != null && _timeUntilLunch != null) {
       return timerBuilder();
     } else {
-      return Text("YEMEK ZİLİ GEÇMİŞTİR",
-          style: Theme.of(context).textTheme.labelMedium);
+      return Text("YEMEK ZİLİ GEÇMİŞTİR", style: Theme.of(context).textTheme.labelMedium);
     }
   }
 }
