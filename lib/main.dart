@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDateFormatting("tr_TR");
-
+  HttpOverrides.global = MyHttpOverrides(); // todo remove later
   await IsolateService.initialize();
 
   await SystemChrome.setPreferredOrientations([
