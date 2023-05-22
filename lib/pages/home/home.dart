@@ -195,11 +195,12 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
         });
   }
 
-  Future<void> _toggleFab(FavoritesState state) async {
-    _showFab = state is FavoritesLoaded &&
-        (state.favorites).isNotEmpty &&
-        _viewIndex == 1;
-    setState(() {});
+  void _toggleFab(FavoritesState state) {
+    setState(() {
+      _showFab = state is FavoritesLoaded &&
+          (state.favorites).isNotEmpty &&
+          _viewIndex == 1;
+    });
   }
 
   @override
@@ -211,7 +212,14 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
         appBar: AppBar(
           title: const Text(appName),
           actions: [
-            if (_viewIndex == 1) const ReminderIconButton(),
+            IgnorePointer(  // fight me
+              ignoring: _viewIndex != 1,
+              child: AnimatedOpacity(
+                opacity: _viewIndex == 1 ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: const ReminderIconButton(),  // gotta keep it const somehow eh
+              ),
+            ),
             IconButton(
                 onPressed: _showAboutDialog,
                 icon: const Icon(Icons.info_outline)),
