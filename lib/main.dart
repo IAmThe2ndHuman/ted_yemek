@@ -23,6 +23,7 @@ void main() async {
 
   await initializeDateFormatting("tr_TR");
   await IsolateService.initialize();
+  await NotificationService.initialize();
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -47,8 +48,8 @@ class MyApp extends StatelessWidget {
           colorScheme: light ?? ThemeData.light().colorScheme,
         ),
         darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: dark ?? ThemeData.dark().colorScheme,
+          useMaterial3: true,
+          colorScheme: dark ?? ThemeData.dark().colorScheme,
         ),
         home: MultiRepositoryProvider(
           providers: [

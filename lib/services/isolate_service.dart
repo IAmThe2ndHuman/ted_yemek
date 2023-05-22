@@ -20,12 +20,11 @@ void _callbackDispatcher() {
     final now = DateTime.now();
 
     HttpOverrides.global = MyHttpOverrides(); // todo remove later
-    await NotificationService.initialize();
 
     try {
       await initializeDateFormatting("tr_TR");
-      final day = Menu.fromHtml(await menuRepo.getMenuHtml())
-          .days[now.weekday - 1];
+      final day =
+          Menu.fromHtml(await menuRepo.getMenuHtml()).days[now.weekday - 1];
       final favorites = await favoritesRepo.favoriteDishes;
 
       final intersection = day.dishes.toSet().intersection(favorites.toSet());

@@ -40,6 +40,20 @@ class AboutModal extends StatelessWidget {
               )
             ],
           ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Image.asset(
+                  "assets/VAKIF_LOGO.png",
+                  scale: 8,
+                ),
+                Text("TED İSTANBUL KOLEJİ VAKFI",
+                    style: Theme.of(context).textTheme.labelSmall)
+              ],
+            ),
+          )
         ],
       ),
       actions: [

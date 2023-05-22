@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 @pragma("vm:entry-point")
 Future<void> _onActionReceivedMethod(ReceivedAction receivedAction) async {}
@@ -39,9 +40,11 @@ sealed class NotificationService {
     final random = Random();
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
+            icon: "resource://drawable/res_app_icon",
+            backgroundColor: Colors.blue,
             id: random.nextInt(100),
             channelKey: 'basic_channel',
-            title: 'Bugün yemekte beğendiğiniz birtakım yemek var',
+            title: 'Bugün beğendiğiniz ${intersection.length} çeşit yemek var',
             body: intersection.join(", ")));
   }
 
@@ -49,12 +52,14 @@ sealed class NotificationService {
     final random = Random();
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
+            icon: "resource://drawable/res_app_icon",
+            backgroundColor: Colors.red,
             id: random.nextInt(100),
             channelKey: 'basic_channel',
-            title: 'Hata',
+            title: 'Menüye ulaşılamadı',
             body: kDebugMode && e != null
                 ? e.toString()
-                : 'Yemek listesi alınamadı. Lütfen internet bağlantınızı kontrol edin.'));
+                : 'Lütfen internet bağlantınızı kontrol edin.'));
   }
 
   // static Future<void> scheduleWeeklyFavoriteNotifications(Menu menu, List<String> favorites, TimeOfDay time,
