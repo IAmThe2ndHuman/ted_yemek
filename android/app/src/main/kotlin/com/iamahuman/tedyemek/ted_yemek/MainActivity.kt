@@ -1,4 +1,4 @@
-package com.iamahuman.tedyemek.ted_yemek
+package com.iamahuman.tedistyemek
 
 import io.flutter.embedding.android.FlutterActivity
 

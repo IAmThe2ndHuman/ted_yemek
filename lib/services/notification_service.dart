@@ -14,11 +14,11 @@ sealed class NotificationService {
           NotificationChannel(
             channelGroupKey: 'basic_channel_group',
             channelKey: 'basic_channel',
-            channelName: 'Basic notifications',
-            channelDescription: 'Notification channel for basic tests',
+            channelName: 'Günlük menü bildirimleri',
+            channelDescription: null,
           )
         ],
-        debug: true);
+        debug: kDebugMode);
   }
 
   static Future<void> setListeners() async {
