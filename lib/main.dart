@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:ted_yemek/constants.dart';
 
 import 'pages/home/bloc/favorites/favorites_cubit.dart';
 import 'pages/home/bloc/menu/menu_cubit.dart';
@@ -18,8 +19,9 @@ import 'services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await initializeDateFormatting("tr_TR");
   HttpOverrides.global = MyHttpOverrides(); // todo remove later
+
+  await initializeDateFormatting("tr_TR");
   await IsolateService.initialize();
 
   await SystemChrome.setPreferredOrientations([
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
 
     return DynamicColorBuilder(builder: (light, dark) {
       return MaterialApp(
-        title: 'Ted Menü',
+        title: appName,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: light ?? ThemeData.light().colorScheme,
@@ -47,18 +49,22 @@ class MyApp extends StatelessWidget {
         darkTheme: ThemeData(
           useMaterial3: true,
           colorScheme: dark ?? ThemeData.dark().colorScheme,
-          cardColor: dark?.onSurface,
         ),
         home: MultiRepositoryProvider(
           providers: [
             // WOULD IT MAKE MORE SENSE TO JUST HAVE ONE SHAREDPREFS REPOSITORY AND PASS PREFS TO THE OTHERS???
             RepositoryProvider<MenuRepository>(create: (_) => MenuRepository()),
-            RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository()),
+            RepositoryProvider<FavoritesRepository>(
+                create: (_) => FavoritesRepository()),
           ],
           child: MultiBlocProvider(
             providers: [
-              BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
-              BlocProvider<FavoritesCubit>(create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
+              BlocProvider<MenuCubit>(
+                  create: (context) =>
+                      MenuCubit(context.read<MenuRepository>())),
+              BlocProvider<FavoritesCubit>(
+                  create: (context) =>
+                      FavoritesCubit(context.read<FavoritesRepository>())),
               BlocProvider<ReminderCubit>(create: (context) => ReminderCubit()),
             ],
             child: const Home(),

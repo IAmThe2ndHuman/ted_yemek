@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ted_yemek/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../repositories/menu_repository.dart';
@@ -86,21 +87,30 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                       onPressed: this.context.read<MenuRepository>().clearCache,
                       child: const FittedBox(child: Text("invalidate cache"))),
                   ElevatedButton(
-                      onPressed: () => launchUrl(MenuRepository.menuUri, mode: LaunchMode.externalApplication),
+                      onPressed: () => launchUrl(MenuRepository.menuUri,
+                          mode: LaunchMode.externalApplication),
                       child: const FittedBox(child: Text("view raw menu"))),
                   ElevatedButton(
                       onPressed: this.context.read<MenuCubit>().initializeMenu,
                       child: const FittedBox(child: Text("rebuild menu"))),
                   ElevatedButton(
-                      onPressed: this.context.read<ReminderCubit>().disableReminder,
+                      onPressed:
+                          this.context.read<ReminderCubit>().disableReminder,
                       child: const FittedBox(child: Text("cancel all tasks"))),
                   ElevatedButton(
-                      onPressed: () => setState(() => SharedPreferences.getInstance()
-                          .then((value) => value.remove("data.remindersEnabled.sawDialog"))),
-                      child: const FittedBox(child: Text("reset data.remindersEnabled.sawDialog"))),
+                      onPressed: () => setState(() =>
+                          SharedPreferences.getInstance().then((value) =>
+                              value.remove("data.remindersEnabled.sawDialog"))),
+                      child: const FittedBox(
+                          child:
+                              Text("reset data.remindersEnabled.sawDialog"))),
                 ],
               ),
-              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("OK"))
+              ],
             );
           });
     }
@@ -119,19 +129,23 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("YAZILIMCI", style: Theme.of(context).textTheme.labelSmall),
+                  Text("YAZILIMCI",
+                      style: Theme.of(context).textTheme.labelSmall),
                   const Text("Koray Öztürkler"),
                   const SizedBox(height: 10),
                   Text("SÜRÜM", style: Theme.of(context).textTheme.labelSmall),
                   Text("v${pkgInfo.version}"),
                   const SizedBox(height: 10),
-                  Text("SDK SÜRÜMÜ", style: Theme.of(context).textTheme.labelSmall),
+                  Text("SDK SÜRÜMÜ",
+                      style: Theme.of(context).textTheme.labelSmall),
                   const SizedBox(height: 5),
                   Row(
                     children: [
                       SvgPicture.asset(
                         "assets/flutter.svg",
-                        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                            Theme.of(context).colorScheme.onSurface,
+                            BlendMode.srcIn),
                         height: 20,
                       ),
                       const SizedBox(width: 10),
@@ -150,7 +164,9 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                       _showDebugDialog();
                     },
                     child: const Text("DEBUG")),
-                TextButton(onPressed: () => Navigator.pop(context), child: const Text("TAMAM"))
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("TAMAM"))
               ],
             );
           });
@@ -171,14 +187,18 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                     this.context.read<FavoritesCubit>().clearFavorites();
                   },
                   child: const Text("EVET, SİL")),
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text("HAYIR"))
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("HAYIR"))
             ],
           );
         });
   }
 
   Future<void> _toggleFab(FavoritesState state) async {
-    _showFab = state is FavoritesLoaded && (state.favorites).isNotEmpty && _viewIndex == 1;
+    _showFab = state is FavoritesLoaded &&
+        (state.favorites).isNotEmpty &&
+        _viewIndex == 1;
     setState(() {});
   }
 
@@ -189,15 +209,18 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       listener: (context, state) => _toggleFab(state),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("TED Yemek Menüsü"),
+          title: const Text(appName),
           actions: [
             if (_viewIndex == 1) const ReminderIconButton(),
-            IconButton(onPressed: _showAboutDialog, icon: const Icon(Icons.info_outline)),
+            IconButton(
+                onPressed: _showAboutDialog,
+                icon: const Icon(Icons.info_outline)),
           ],
         ),
         body: PageTransitionSwitcher(
             duration: const Duration(milliseconds: 400),
-            transitionBuilder: ((child, primaryAnimation, secondaryAnimation) => FadeThroughTransition(
+            transitionBuilder: ((child, primaryAnimation, secondaryAnimation) =>
+                FadeThroughTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   fillColor: Theme.of(context).colorScheme.surface,
@@ -217,7 +240,9 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               label: "Menü",
             ),
             NavigationDestination(
-                icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: "Favoriler"),
+                icon: Icon(Icons.favorite_border),
+                selectedIcon: Icon(Icons.favorite),
+                label: "Favoriler"),
           ],
         ),
         floatingActionButton: _showFab

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/foundation.dart';
 
 @pragma("vm:entry-point")
 Future<void> _onActionReceivedMethod(ReceivedAction receivedAction) async {}
@@ -21,17 +22,20 @@ sealed class NotificationService {
   }
 
   static Future<void> setListeners() async {
-    AwesomeNotifications().setListeners(onActionReceivedMethod: _onActionReceivedMethod);
+    AwesomeNotifications()
+        .setListeners(onActionReceivedMethod: _onActionReceivedMethod);
   }
 
   static Future<bool> requestNotificationAccess() async {
     if (!await AwesomeNotifications().isNotificationAllowed()) {
-      return await AwesomeNotifications().requestPermissionToSendNotifications();
+      return await AwesomeNotifications()
+          .requestPermissionToSendNotifications();
     }
     return true;
   }
 
-  static Future<void> displayFavoritesNotification(Set<String> intersection) async {
+  static Future<void> displayFavoritesNotification(
+      Set<String> intersection) async {
     final random = Random();
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
@@ -41,14 +45,16 @@ sealed class NotificationService {
             body: intersection.join(", ")));
   }
 
-  static Future<void> displayErrorNotification() async {
+  static Future<void> displayErrorNotification([Object? e]) async {
     final random = Random();
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
             id: random.nextInt(100),
             channelKey: 'basic_channel',
             title: 'Hata',
-            body: 'Yemek listesi alınamadı. Lütfen internet bağlantınızı kontrol edin.'));
+            body: kDebugMode && e != null
+                ? e.toString()
+                : 'Yemek listesi alınamadı. Lütfen internet bağlantınızı kontrol edin.'));
   }
 
   // static Future<void> scheduleWeeklyFavoriteNotifications(Menu menu, List<String> favorites, TimeOfDay time,

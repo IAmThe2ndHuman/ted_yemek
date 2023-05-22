@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -14,11 +17,15 @@ void _callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     final menuRepo = MenuRepository();
     final favoritesRepo = FavoritesRepository();
+    final now = DateTime.now();
 
-    NotificationService.initialize();
+    HttpOverrides.global = MyHttpOverrides(); // todo remove later
+    await NotificationService.initialize();
 
     try {
-      final day = Menu.parseHtml(await menuRepo.getMenuHtml()).days[inputData!["weekdayIndex"]];
+      await initializeDateFormatting("tr_TR");
+      final day = Menu.fromHtml(await menuRepo.getMenuHtml())
+          .days[now.weekday - 1];
       final favorites = await favoritesRepo.favoriteDishes;
 
       final intersection = day.dishes.toSet().intersection(favorites.toSet());
@@ -26,7 +33,7 @@ void _callbackDispatcher() {
         await NotificationService.displayFavoritesNotification(intersection);
       }
     } catch (e) {
-      await NotificationService.displayErrorNotification();
+      await NotificationService.displayErrorNotification(e);
     }
     return true;
   });
@@ -36,7 +43,8 @@ class TimeOfReminder extends Equatable {
   final TimeOfDay? timeOfDay;
   final bool sawReminderDialog;
 
-  const TimeOfReminder({required this.timeOfDay, required this.sawReminderDialog});
+  const TimeOfReminder(
+      {required this.timeOfDay, required this.sawReminderDialog});
 
   @override
   List<Object?> get props => [timeOfDay, sawReminderDialog];
@@ -48,7 +56,8 @@ sealed class IsolateService {
   static const _remindersEnabledMinute = "data.remindersEnabled.m";
 
   static Future<void> initialize() async {
-    await Workmanager().initialize(_callbackDispatcher, isInDebugMode: kDebugMode);
+    await Workmanager()
+        .initialize(_callbackDispatcher, isInDebugMode: kDebugMode);
   }
 
   static Future<TimeOfReminder> get timeOfReminder async {
@@ -80,14 +89,16 @@ sealed class IsolateService {
     final now = DateTime.now();
 
     for (final day in menu.days) {
-      final dateOfNotifying = DateTime(day.date.year, day.date.month, day.date.day, time.hour, time.minute);
+      final dateOfNotifying = DateTime(
+          day.date.year, day.date.month, day.date.day, time.hour, time.minute);
 
       await Workmanager().registerPeriodicTask(
-          "weekly-favorite-notification-${day.date.hashCode}", "weeklyFavoriteNotification",
+          "weekly-favorite-notification-${day.date.hashCode}",
+          "weeklyFavoriteNotification",
           tag: "weekly-favorite-notification-${day.date.hashCode}",
           backoffPolicyDelay: const Duration(minutes: 30),
           backoffPolicy: BackoffPolicy.linear,
-          inputData: {"weekdayIndex": day.date.weekday - 1},
+          // inputData: {"weekdayIndex": day.date.weekday - 1},
           initialDelay: now.isAfter(dateOfNotifying)
               ? dateOfNotifying.add(const Duration(days: 7)).difference(now)
               : dateOfNotifying.difference(now),

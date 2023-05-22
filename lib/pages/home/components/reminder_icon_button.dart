@@ -39,7 +39,7 @@ class ReminderIconButton extends StatelessWidget {
     if (context.mounted && canNotify) {
       final time = await showTimePicker(
           context: context,
-          initialTime: TimeOfDay.now(),
+          initialTime: TimeOfDay.now(),  // TODO: if edit show selected time lol
           helpText: "Bildirilmek istediğiniz saati seçin.",
           cancelText: "İPTAL",
           confirmText: "KUR");
