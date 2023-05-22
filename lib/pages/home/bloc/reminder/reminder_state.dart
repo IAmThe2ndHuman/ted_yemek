@@ -13,11 +13,11 @@ class ReminderInitial extends ReminderState {
 }
 
 class ReminderEnabled extends ReminderState {
-  final TimeOfDay timeOfDay;
-  const ReminderEnabled(super.sawDialog, this.timeOfDay);
+  final TimeOfDay timeOfReminder;
+  const ReminderEnabled(super.sawDialog, this.timeOfReminder);
 
   @override
-  List<Object> get props => [timeOfDay, sawDialog];
+  List<Object> get props => [timeOfReminder, sawDialog];
 }
 
 class ReminderDisabled extends ReminderState {

@@ -6,7 +6,7 @@ class FavoritesView extends StatelessWidget {
   final List<String> favorites;
   const FavoritesView({super.key, required this.favorites});
 
-  Widget _errorBuilder(BuildContext context) {
+  Widget _noFavoritesBuilder(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Center(
@@ -17,9 +17,12 @@ class FavoritesView extends StatelessWidget {
             size: 60,
           ),
           const SizedBox(height: 10),
-          Text("Favori Bulunmamaktadır", textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
+          Text("Favori Bulunmamaktadır",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 20),
-          const Text("description", textAlign: TextAlign.center),
+          const Text("Menü sayfasında beğendiğiniz yemekler burada olacaktır.",
+              textAlign: TextAlign.center),
         ]),
       ),
     );
@@ -27,9 +30,11 @@ class FavoritesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (favorites.isEmpty) return _errorBuilder(context);
+    if (favorites.isEmpty) return _noFavoritesBuilder(context);
     return ListView(
-      children: [for (final dishName in favorites) DishTile(dishName: dishName)],
+      children: [
+        for (final dishName in favorites) DishTile(dishName: dishName)
+      ],
     );
   }
 }

@@ -4,11 +4,10 @@ import 'package:after_layout/after_layout.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ted_yemek/constants.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:ted_yemek/pages/home/modals/about_modal.dart';
+import 'package:ted_yemek/pages/home/modals/debug_modal.dart';
 
 import '../../repositories/menu_repository.dart';
 import 'bloc/favorites/favorites_cubit.dart';
@@ -69,51 +68,15 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
     context.read<ReminderCubit>().initializeReminder();
   }
 
-  Future<void> _showDebugDialog() async {
-    final cacheValid = await context.read<MenuRepository>().menuCacheValid;
-
-    if (mounted) {
-      await showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("Debug Menu"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text("menuCacheValid: $cacheValid"),
-                  ElevatedButton(
-                      onPressed: this.context.read<MenuRepository>().clearCache,
-                      child: const FittedBox(child: Text("invalidate cache"))),
-                  ElevatedButton(
-                      onPressed: () => launchUrl(MenuRepository.menuUri,
-                          mode: LaunchMode.externalApplication),
-                      child: const FittedBox(child: Text("view raw menu"))),
-                  ElevatedButton(
-                      onPressed: this.context.read<MenuCubit>().initializeMenu,
-                      child: const FittedBox(child: Text("rebuild menu"))),
-                  ElevatedButton(
-                      onPressed:
-                          this.context.read<ReminderCubit>().disableReminder,
-                      child: const FittedBox(child: Text("cancel all tasks"))),
-                  ElevatedButton(
-                      onPressed: () => setState(() =>
-                          SharedPreferences.getInstance().then((value) =>
-                              value.remove("data.remindersEnabled.sawDialog"))),
-                      child: const FittedBox(
-                          child:
-                              Text("reset data.remindersEnabled.sawDialog"))),
-                ],
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("OK"))
-              ],
-            );
-          });
-    }
+  void _showDebugDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DebugModal(
+            menuRepository: this.context.read<MenuRepository>(),
+            menuCubit: this.context.read<MenuCubit>(),
+          );
+        });
   }
 
   Future<void> _showAboutDialog() async {
@@ -123,52 +86,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       await showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: const Text("Hakkında"),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("YAZILIMCI",
-                      style: Theme.of(context).textTheme.labelSmall),
-                  const Text("Koray Öztürkler"),
-                  const SizedBox(height: 10),
-                  Text("SÜRÜM", style: Theme.of(context).textTheme.labelSmall),
-                  Text("v${pkgInfo.version}"),
-                  const SizedBox(height: 10),
-                  Text("SDK SÜRÜMÜ",
-                      style: Theme.of(context).textTheme.labelSmall),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        "assets/flutter.svg",
-                        colorFilter: ColorFilter.mode(
-                            Theme.of(context).colorScheme.onSurface,
-                            BlendMode.srcIn),
-                        height: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        "v3.7.0",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _showDebugDialog();
-                    },
-                    child: const Text("DEBUG")),
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("TAMAM"))
-              ],
-            );
+            return AboutModal(packageInfo: pkgInfo);
           });
     }
   }
@@ -178,8 +96,8 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text("Tüm favorilerini silme"),
-            content: const Text("Tüm favorilerinizi silmek ister misiniz?"),
+            title: const Text("Favori Silme"),
+            content: const Text("Tüm favorilerinizi silmek istiyor musunuz?"),
             actions: [
               TextButton(
                   onPressed: () {
@@ -210,14 +128,17 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       listener: (context, state) => _toggleFab(state),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(appName),
+          title: GestureDetector(
+              onLongPress: _showDebugDialog, child: const Text(appName)),
           actions: [
-            IgnorePointer(  // fight me
+            IgnorePointer(
+              // fight me
               ignoring: _viewIndex != 1,
               child: AnimatedOpacity(
                 opacity: _viewIndex == 1 ? 1 : 0,
                 duration: const Duration(milliseconds: 200),
-                child: const ReminderIconButton(),  // gotta keep it const somehow eh
+                child:
+                    const ReminderIconButton(), // gotta keep it const somehow eh
               ),
             ),
             IconButton(

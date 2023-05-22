@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 class UntilLunchTimer extends StatefulWidget {
   final Duration? Function() durationUntilLunchCallback;
 
-  const UntilLunchTimer(this.durationUntilLunchCallback, {Key? key}) : super(key: key);
+  const UntilLunchTimer(this.durationUntilLunchCallback, {Key? key})
+      : super(key: key);
 
   @override
   State<UntilLunchTimer> createState() => _UntilLunchTimerState();
 }
 
-class _UntilLunchTimerState extends State<UntilLunchTimer> with WidgetsBindingObserver {
+class _UntilLunchTimerState extends State<UntilLunchTimer>
+    with WidgetsBindingObserver {
   Timer? _timeUntilLunch;
   int? _secondsUntilLunch;
 
@@ -51,14 +53,10 @@ class _UntilLunchTimerState extends State<UntilLunchTimer> with WidgetsBindingOb
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("YEMEĞE KALAN SÜRE", style: Theme.of(context).textTheme.labelMedium),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOutCubic,
-          alignment: Alignment.topLeft,
-          child: Text(_secondsUntilLunch == 0 ? "BİRAZDAN ZİL ÇALAR :)" : "$hour:$min:$sec",
-              style: Theme.of(context).textTheme.displayMedium),
-        ),
+        Text("YEMEK ZİLİNE KALAN SÜRE",
+            style: Theme.of(context).textTheme.labelMedium),
+        Text("$hour:$min:$sec",
+            style: Theme.of(context).textTheme.displayMedium),
       ],
     );
   }
@@ -82,7 +80,8 @@ class _UntilLunchTimerState extends State<UntilLunchTimer> with WidgetsBindingOb
     if (_secondsUntilLunch != null && _timeUntilLunch != null) {
       return timerBuilder();
     } else {
-      return Text("YEMEK ZİLİ GEÇMİŞTİR", style: Theme.of(context).textTheme.labelMedium);
+      return Text("YEMEK ZİLİ ÇALMIŞTIR",
+          style: Theme.of(context).textTheme.labelMedium);
     }
   }
 }

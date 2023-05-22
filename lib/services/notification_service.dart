@@ -41,7 +41,7 @@ sealed class NotificationService {
         content: NotificationContent(
             id: random.nextInt(100),
             channelKey: 'basic_channel',
-            title: 'Bugün yemekte olacak (placeholder)',
+            title: 'Bugün yemekte beğendiğiniz birtakım yemek var',
             body: intersection.join(", ")));
   }
 
