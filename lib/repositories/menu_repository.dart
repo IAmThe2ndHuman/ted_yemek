@@ -9,33 +9,34 @@ class MenuRepository {
   static const String _cache = "cache.html";
   static const String _cacheExpr = "cache.html.expiration";
 
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final SharedPreferences preferences;
+  const MenuRepository(this.preferences);
 
   Future<String> getMenuHtml() async {
     final now = DateTime.now();
-    final cacheExpiration = (await _prefs).getInt(_cacheExpr); // EPOCH (MS)
+    final cacheExpiration = preferences.getInt(_cacheExpr); // EPOCH (MS)
 
     if (cacheExpiration != null && cacheExpiration > now.millisecondsSinceEpoch) {
-      final htmlCache = (await _prefs).getString(_cache);
+      final htmlCache = preferences.getString(_cache);
       if (htmlCache != null) return htmlCache;
     }
 
     final html = await _fetchMenuHtml();
-    (await _prefs).setString(_cache, html);
+    preferences.setString(_cache, html);
 
     final expirationDate = DateTime(now.year, now.month, now.day).add(Duration(days: 8 - now.weekday));
-    await (await _prefs).setInt("cache.html.expiration", expirationDate.millisecondsSinceEpoch);
+    await preferences.setInt("cache.html.expiration", expirationDate.millisecondsSinceEpoch);
 
     return html;
   }
 
   Future<void> clearCache() async {
-    await (await _prefs).remove(_cacheExpr);
-    await (await _prefs).remove(_cache);
+    await preferences.remove(_cacheExpr);
+    await preferences.remove(_cache);
   }
 
   Future<bool> get menuCacheValid async {
-    final cacheExpiration = (await _prefs).getInt(_cacheExpr);
+    final cacheExpiration = preferences.getInt(_cacheExpr);
     if (cacheExpiration == null) return false;
 
     final now = DateTime.now();

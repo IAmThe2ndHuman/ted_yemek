@@ -15,16 +15,17 @@ import 'notification_service.dart';
 @pragma('vm:entry-point')
 void _callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    final menuRepo = MenuRepository();
-    final favoritesRepo = FavoritesRepository();
+    final preferences = await SharedPreferences.getInstance();
+
+    final menuRepo = MenuRepository(preferences);
+    final favoritesRepo = FavoritesRepository(preferences);
     final now = DateTime.now();
 
     HttpOverrides.global = MyHttpOverrides(); // todo remove later
 
     try {
       await initializeDateFormatting("tr_TR");
-      final day =
-          Menu.fromHtml(await menuRepo.getMenuHtml()).days[now.weekday - 1];
+      final day = Menu.fromHtml(await menuRepo.getMenuHtml()).days[now.weekday - 1];
       final favorites = await favoritesRepo.favoriteDishes;
 
       final intersection = day.dishes.toSet().intersection(favorites.toSet());
@@ -42,8 +43,7 @@ class TimeOfReminder extends Equatable {
   final TimeOfDay? timeOfDay;
   final bool sawReminderDialog;
 
-  const TimeOfReminder(
-      {required this.timeOfDay, required this.sawReminderDialog});
+  const TimeOfReminder({required this.timeOfDay, required this.sawReminderDialog});
 
   @override
   List<Object?> get props => [timeOfDay, sawReminderDialog];
@@ -55,8 +55,7 @@ sealed class IsolateService {
   static const _remindersEnabledMinute = "data.remindersEnabled.m";
 
   static Future<void> initialize() async {
-    await Workmanager()
-        .initialize(_callbackDispatcher, isInDebugMode: kDebugMode);
+    await Workmanager().initialize(_callbackDispatcher, isInDebugMode: kDebugMode);
   }
 
   static Future<TimeOfReminder> get timeOfReminder async {
@@ -88,12 +87,10 @@ sealed class IsolateService {
     final now = DateTime.now();
 
     for (final day in menu.days) {
-      final dateOfNotifying = DateTime(
-          day.date.year, day.date.month, day.date.day, time.hour, time.minute);
+      final dateOfNotifying = DateTime(day.date.year, day.date.month, day.date.day, time.hour, time.minute);
 
       await Workmanager().registerPeriodicTask(
-          "weekly-favorite-notification-${day.date.hashCode}",
-          "weeklyFavoriteNotification",
+          "weekly-favorite-notification-${day.date.hashCode}", "weeklyFavoriteNotification",
           tag: "weekly-favorite-notification-${day.date.hashCode}",
           backoffPolicyDelay: const Duration(minutes: 30),
           backoffPolicy: BackoffPolicy.linear,
