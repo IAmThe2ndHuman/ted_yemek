@@ -13,15 +13,24 @@ class MenuCubit extends Cubit<MenuState> {
 
   Future<void> initializeMenu() async {
     emit(const MenuLoading());
+
     try {
-      emit(MenuLoaded(Menu.fromHtml(await _menuRepository.getMenuHtml())));
+      var html = await _menuRepository.getCachedHtml();
+      var cache = false;
+
+      if (html == null) {
+        html = await _menuRepository.fetchMenuHtml();
+        cache = true;
+      }
+
+      final menu = Menu.fromHtml(html);
+      emit(MenuLoaded(menu));
+
+      if (cache) await _menuRepository.setCacheHtml(html);
+    } on AppError catch (e) {
+      emit(MenuError(e));
     } catch (e) {
-      emit(MenuError(AppError(
-          "Bağlantı veya önbellek hatası",
-          "Menüyü görebilmek için internete bağlanmanız "
-              "gerekmektedir. Bir kez bağlandıktan sonra bu haftanın menüsünü internetsiz görebileceksiniz.\n\nİnternete "
-              "bağlıyken bile bu hatayı görüyorsanız muhtemelen sitenin html'i değişmiştir veya direk çökmüştür.",
-          "${e.runtimeType}\n$e")));
+      emit(MenuError(AppError("Bilimneyen Hata", "Bilinmeyen bir hata oluşmuştur.", "${e.runtimeType}\n$e")));
     }
   }
 }
