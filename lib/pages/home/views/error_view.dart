@@ -18,14 +18,12 @@ class ErrorView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.warning,
+              error.icon ?? Icons.warning,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               size: 60,
             ),
             const SizedBox(height: 10),
-            Text(error.title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge),
+            Text(error.title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 20),
             Text(error.description, textAlign: TextAlign.center),
             const SizedBox(height: 20),
@@ -33,7 +31,7 @@ class ErrorView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton.icon(
-                  onPressed: context.read<MenuCubit>().initializeMenu,
+                  onPressed: error.customCallback ?? context.read<MenuCubit>().initializeMenu,
                   icon: const Icon(Icons.refresh),
                   label: const Text("Yenile"),
                 ),
@@ -45,18 +43,16 @@ class ErrorView extends StatelessWidget {
                             builder: (context) {
                               return AlertDialog(
                                 title: const Text("Hata Detayları"),
-                                content: Text(error.details!),
+                                content: SingleChildScrollView(child: Text(error.details!)),
                                 actions: [
-                                  TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("TAMAM"))
+                                  TextButton(onPressed: () => Navigator.pop(context), child: const Text("TAMAM"))
                                 ],
                               );
                             })
                         : null,
                     child: const Text("Hata Detayları")),
               ],
-            )
+            ),
           ],
         ),
       ),
