@@ -18,18 +18,18 @@ class Menu {
     final document = parse(html);
 
     final strong = document.getElementsByTagName("strong");
-    final mondayDate =
-        DateFormat("d MMMM yyyy EEEE", "tr_TR").parse(strong.first.text.trim());
-    final days = document.getElementsByTagName("div").first.children;
+    final mondayDate = DateFormat("d MMMM yyyy EEEE", "tr_TR").parse(strong.first.text.trim());
+
+    // two cases identified so far
+    final divs = document.getElementsByTagName("div");
+    final days = (divs.length == 1 ? divs.first : divs[2]).children;
 
     List<Day> menu = [];
     int daysIncrement = 0;
 
     for (final element in days) {
-      final dishes =
-          element.getElementsByClassName("tablo").map((e) => e.text.trim());
-      menu.add(
-          Day(dishes.toList(), mondayDate.add(Duration(days: daysIncrement))));
+      final dishes = element.getElementsByClassName("tablo").map((e) => e.text.trim());
+      menu.add(Day(dishes.toList(), mondayDate.add(Duration(days: daysIncrement))));
       daysIncrement++;
     }
 
