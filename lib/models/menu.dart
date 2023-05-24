@@ -26,7 +26,7 @@ class Menu {
       final mondayDate = DateFormat("d MMMM yyyy EEEE", "tr_TR").parse(strong.first.text.trim());
 
       // two cases identified so far
-      final divs = document.getElementsByTagName("divs");
+      final divs = document.getElementsByTagName("div");
       final days = (divs.length == 1 ? divs.first : divs[2]).children;
 
       List<Day> menu = [];
