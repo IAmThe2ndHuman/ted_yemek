@@ -20,24 +20,26 @@ import 'services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  HttpOverrides.global = MyHttpOverrides(); // todo remove later
+  final preferences = await SharedPreferences.getInstance();
 
   await initializeDateFormatting("tr_TR");
   await IsolateService.initialize();
   await NotificationService.initialize();
 
-  final preferences = await SharedPreferences.getInstance();
-
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
-  runApp(MyApp(preferences: preferences));
+  HttpOverrides.global = MyHttpOverrides(); // todo remove later
+
+  runApp(MultiRepositoryProvider(providers: [
+    RepositoryProvider<MenuRepository>(create: (_) => MenuRepository(preferences)),
+    RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository(preferences)),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  final SharedPreferences preferences;
-  const MyApp({super.key, required this.preferences});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,19 +56,13 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: dark ?? ThemeData.dark().colorScheme,
         ),
-        home: MultiRepositoryProvider(
+        home: MultiBlocProvider(
           providers: [
-            RepositoryProvider<MenuRepository>(create: (_) => MenuRepository(preferences)),
-            RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository(preferences)),
+            BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
+            BlocProvider<FavoritesCubit>(create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
+            BlocProvider<ReminderCubit>(create: (context) => ReminderCubit()),
           ],
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
-              BlocProvider<FavoritesCubit>(create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
-              BlocProvider<ReminderCubit>(create: (context) => ReminderCubit()),
-            ],
-            child: const Home(),
-          ),
+          child: const Home(),
         ),
       );
     });

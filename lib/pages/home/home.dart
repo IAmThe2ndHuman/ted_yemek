@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:after_layout/after_layout.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +24,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with AfterLayoutMixin {
+class _HomeState extends State<Home> {
   int _viewIndex = 0;
   bool _showFab = false;
 
@@ -62,7 +61,8 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
   ];
 
   @override
-  FutureOr<void> afterFirstLayout(BuildContext context) async {
+  void initState() {
+    super.initState();
     context.read<MenuCubit>().initializeMenu();
     context.read<FavoritesCubit>().initializeFavorites();
     context.read<ReminderCubit>().initializeReminder();
@@ -105,9 +105,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                     this.context.read<FavoritesCubit>().clearFavorites();
                   },
                   child: const Text("EVET, SİL")),
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("HAYIR"))
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text("HAYIR"))
             ],
           );
         });
@@ -115,9 +113,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
 
   void _toggleFab(FavoritesState state) {
     setState(() {
-      _showFab = state is FavoritesLoaded &&
-          (state.favorites).isNotEmpty &&
-          _viewIndex == 1;
+      _showFab = state is FavoritesLoaded && (state.favorites).isNotEmpty && _viewIndex == 1;
     });
   }
 
@@ -128,8 +124,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       listener: (context, state) => _toggleFab(state),
       child: Scaffold(
         appBar: AppBar(
-          title: GestureDetector(
-              onLongPress: _showDebugDialog, child: const Text(appName)),
+          title: GestureDetector(onLongPress: _showDebugDialog, child: const Text(appName)),
           actions: [
             IgnorePointer(
               // fight me
@@ -137,19 +132,15 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               child: AnimatedOpacity(
                 opacity: _viewIndex == 1 ? 1 : 0,
                 duration: const Duration(milliseconds: 200),
-                child:
-                    const ReminderIconButton(), // gotta keep it const somehow eh
+                child: const ReminderIconButton(), // gotta keep it const somehow eh
               ),
             ),
-            IconButton(
-                onPressed: _showAboutDialog,
-                icon: const Icon(Icons.info_outline)),
+            IconButton(onPressed: _showAboutDialog, icon: const Icon(Icons.info_outline)),
           ],
         ),
         body: PageTransitionSwitcher(
             duration: const Duration(milliseconds: 400),
-            transitionBuilder: ((child, primaryAnimation, secondaryAnimation) =>
-                FadeThroughTransition(
+            transitionBuilder: ((child, primaryAnimation, secondaryAnimation) => FadeThroughTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   fillColor: Theme.of(context).colorScheme.surface,
@@ -169,9 +160,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               label: "Menü",
             ),
             NavigationDestination(
-                icon: Icon(Icons.favorite_border),
-                selectedIcon: Icon(Icons.favorite),
-                label: "Favoriler"),
+                icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: "Favoriler"),
           ],
         ),
         floatingActionButton: _showFab
