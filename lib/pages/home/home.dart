@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:after_layout/after_layout.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +9,7 @@ import 'package:ted_yemek/pages/home/modals/about_modal.dart';
 import 'package:ted_yemek/pages/home/modals/debug_modal.dart';
 
 import '../../repositories/menu_repository.dart';
+import '../settings/settings.dart';
 import 'bloc/favorites/favorites_cubit.dart';
 import 'bloc/menu/menu_cubit.dart';
 import 'bloc/reminder/reminder_cubit.dart';
@@ -19,13 +19,14 @@ import 'views/favorites_view.dart';
 import 'views/menu_view.dart';
 
 class Home extends StatefulWidget {
+  static const String routeName = "/";
   const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with AfterLayoutMixin {
+class _HomeState extends State<Home> {
   int _viewIndex = 0;
   bool _showFab = false;
 
@@ -62,11 +63,19 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
   ];
 
   @override
-  FutureOr<void> afterFirstLayout(BuildContext context) async {
+  void initState() {
+    super.initState();
     context.read<MenuCubit>().initializeMenu();
     context.read<FavoritesCubit>().initializeFavorites();
     context.read<ReminderCubit>().initializeReminder();
   }
+
+  // @override
+  // FutureOr<void> afterFirstLayout(BuildContext context) async {
+  //   context.read<MenuCubit>().initializeMenu();
+  //   context.read<FavoritesCubit>().initializeFavorites();
+  //   context.read<ReminderCubit>().initializeReminder();
+  // }
 
   void _showDebugDialog() {
     showDialog(
@@ -105,9 +114,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
                     this.context.read<FavoritesCubit>().clearFavorites();
                   },
                   child: const Text("EVET, SİL")),
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("HAYIR"))
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text("HAYIR"))
             ],
           );
         });
@@ -115,9 +122,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
 
   void _toggleFab(FavoritesState state) {
     setState(() {
-      _showFab = state is FavoritesLoaded &&
-          (state.favorites).isNotEmpty &&
-          _viewIndex == 1;
+      _showFab = state is FavoritesLoaded && (state.favorites).isNotEmpty && _viewIndex == 1;
     });
   }
 
@@ -128,8 +133,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
       listener: (context, state) => _toggleFab(state),
       child: Scaffold(
         appBar: AppBar(
-          title: GestureDetector(
-              onLongPress: _showDebugDialog, child: const Text(appName)),
+          title: GestureDetector(onLongPress: _showDebugDialog, child: const Text(appName)),
           actions: [
             IgnorePointer(
               // fight me
@@ -137,19 +141,18 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               child: AnimatedOpacity(
                 opacity: _viewIndex == 1 ? 1 : 0,
                 duration: const Duration(milliseconds: 200),
-                child:
-                    const ReminderIconButton(), // gotta keep it const somehow eh
+                child: const ReminderIconButton(), // gotta keep it const somehow eh
               ),
             ),
+            IconButton(onPressed: _showAboutDialog, icon: const Icon(Icons.info_outline)),
             IconButton(
-                onPressed: _showAboutDialog,
-                icon: const Icon(Icons.info_outline)),
+                onPressed: () => Navigator.pushNamed(context, Settings.routeName),
+                icon: const Icon(Icons.settings_outlined)),
           ],
         ),
         body: PageTransitionSwitcher(
             duration: const Duration(milliseconds: 400),
-            transitionBuilder: ((child, primaryAnimation, secondaryAnimation) =>
-                FadeThroughTransition(
+            transitionBuilder: ((child, primaryAnimation, secondaryAnimation) => FadeThroughTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   fillColor: Theme.of(context).colorScheme.surface,
@@ -169,9 +172,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin {
               label: "Menü",
             ),
             NavigationDestination(
-                icon: Icon(Icons.favorite_border),
-                selectedIcon: Icon(Icons.favorite),
-                label: "Favoriler"),
+                icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: "Favoriler"),
           ],
         ),
         floatingActionButton: _showFab
