@@ -9,4 +9,9 @@ class SettingsState extends Equatable {
 
   @override
   List<Object> get props => [brightness, lunchtimeTime, schoolType];
+
+  @override
+  String toString() {
+    return "brightness: $brightness\nlunchtime time: $lunchtimeTime\nschool type: $schoolType";
+  }
 }

@@ -21,6 +21,11 @@ class MenuLoaded extends MenuState {
 
   @override
   List<Object> get props => [menu];
+
+  @override
+  String toString() {
+    return menu.toString();
+  }
 }
 
 class MenuError extends MenuState {
