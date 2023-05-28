@@ -49,7 +49,18 @@ class Settings extends StatelessWidget {
       ),
       Divider(),
       const SettingHeaderTile(title: "Zaman"),
-
+      SettingTile(
+        title: "Yemek saati",
+        description: "Yemek zilinin saati",
+        actions: [
+          Text("00:00", style: Theme.of(context).textTheme.headlineSmall),
+          SizedBox(width: 10),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.edit_outlined),
+          )
+        ],
+      )
       // if (state.supportsMaterial3)
       //   ListTile(
       //     title: Text("Material You"),
