@@ -21,11 +21,11 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> setBrightness(AppBrightness value) async {
     await _settingsRepository.setBrightness(value);
-    initialize();
+    emit(SettingsBrightnessUpdated(value, (state as SettingsInitialized).lunchtimeTime));
   }
 
   Future<void> setLunchtimeTime(TimeOfDay timeOfDay) async {
     await _settingsRepository.setLunchtimeTime(timeOfDay);
-    initialize();
+    emit(SettingsBrightnessUpdated((state as SettingsInitialized).brightness, timeOfDay));
   }
 }

@@ -20,10 +20,10 @@ class SettingsRepository {
     await preferences.setInt(_brightness, value.id);
   }
 
-  static const TimeOfDay _defaultLunchtimeTime = TimeOfDay(hour: 12, minute: 10);
+  static const TimeOfDay defaultLunchtimeTime = TimeOfDay(hour: 12, minute: 10);
   TimeOfDay get lunchtimeTime => TimeOfDay(
-      hour: preferences.getInt(_lunchtimeHour) ?? _defaultLunchtimeTime.hour,
-      minute: preferences.getInt(_lunchtimeMinute) ?? _defaultLunchtimeTime.minute);
+      hour: preferences.getInt(_lunchtimeHour) ?? defaultLunchtimeTime.hour,
+      minute: preferences.getInt(_lunchtimeMinute) ?? defaultLunchtimeTime.minute);
   Future<void> setLunchtimeTime(TimeOfDay timeOfDay) async {
     await preferences.setInt(_lunchtimeHour, timeOfDay.hour);
     await preferences.setInt(_lunchtimeMinute, timeOfDay.minute);
