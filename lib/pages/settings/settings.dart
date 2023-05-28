@@ -53,8 +53,6 @@ class Settings extends StatelessWidget {
         title: "Yemek saati",
         description: "Yemek zilinin saati",
         actions: [
-          Text(state.lunchtimeTime.format(context), style: Theme.of(context).textTheme.headlineSmall),
-          SizedBox(width: 10),
           IconButton(
             onPressed: () async {
               final time = await showTimePicker(context: context, initialTime: state.lunchtimeTime);
@@ -62,14 +60,51 @@ class Settings extends StatelessWidget {
                 await cubit.setLunchtimeTime(time);
               }
             },
-            icon: const Icon(Icons.edit_outlined),
+            icon: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: [
+                  Text(state.lunchtimeTime.format(context), style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(width: 15),
+                  const Icon(Icons.edit_outlined)
+                ],
+              ),
+            ),
           )
         ],
       ),
-      const SettingTile(
+      SettingTile(
         title: "Okul menüsü",
-        description: "Hangi okulun menüsünü göstermeli",
-        actions: [],
+        description: "Uygulama hangi okulun menüsünü göstermeli",
+        actions: [
+          PopupMenuButton<SchoolType>(
+              icon: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      state.schoolType.toString(),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(width: 5),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    )
+                  ],
+                ),
+              ),
+              onSelected: (schoolType) => cubit.setSchoolType(schoolType),
+              itemBuilder: (context) => [
+                    for (final schoolType in SchoolType.values)
+                      CheckedPopupMenuItem(
+                        checked: schoolType == state.schoolType,
+                        value: schoolType,
+                        child: Text(schoolType.toString()),
+                      )
+                  ])
+        ],
       ),
       const Divider(),
       const SettingHeaderTile(title: "Hakkında"),
