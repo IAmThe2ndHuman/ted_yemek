@@ -16,9 +16,8 @@ class DebugModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(title: const Text("debug"), contentPadding: const EdgeInsets.all(16), children: [
-      Text("cache valid: ${menuRepository.menuCacheValid(settingsCubit.state.schoolType)}"),
-      Text(menuCubit.state.toString()),
-      Text(settingsCubit.state.toString()),
+      Text("cache valid: ${menuRepository.menuCacheValid(settingsCubit.state.schoolType)}\n\n"
+          "${menuCubit.state}\n\n${settingsCubit.state.toString()}"),
       ElevatedButton(
           onPressed: () {
             menuRepository.clearCache(settingsCubit.state.schoolType);

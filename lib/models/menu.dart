@@ -11,6 +11,8 @@ import 'day.dart';
 class Menu {
   final List<Day> days;
 
+  const Menu(this.days);
+
   // static List<Dishes> dishesFromHtml(String html) {}
 
   Day? get today {
@@ -52,5 +54,8 @@ class Menu {
     }
   }
 
-  Menu(this.days);
+  @override
+  String toString() {
+    return days.toString();
+  }
 }

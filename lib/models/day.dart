@@ -4,6 +4,8 @@ class Day {
   final DateTime date;
   final List<String> dishes;
 
+  const Day(this.dishes, this.date);
+
   Duration? durationUntilLunch(TimeOfDay lunchtimeTime) {
     final now = DateTime.now();
     // if (kDebugMode) now = DateTime(now.year, now.month, now.day, 12, 9, 50);
@@ -15,5 +17,8 @@ class Day {
     return lunchtime.difference(now);
   }
 
-  const Day(this.dishes, this.date);
+  @override
+  String toString() {
+    return "$runtimeType($dishes, $date)";
+  }
 }
