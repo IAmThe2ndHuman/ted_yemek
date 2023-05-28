@@ -11,7 +11,7 @@ class Settings extends StatelessWidget {
   static const String routeName = "/settings";
   const Settings({Key? key}) : super(key: key);
 
-  List<Widget> _settingsBuilder(BuildContext context, SettingsInitialized state) {
+  List<Widget> _settingsBuilder(BuildContext context, SettingsState state) {
     final cubit = context.read<SettingsCubit>();
 
     return [
@@ -101,13 +101,10 @@ class Settings extends StatelessWidget {
       appBar: AppBar(title: const Text("Ayarlar")),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
-          if (state is SettingsInitialized) {
-            return ListView(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              children: _settingsBuilder(context, state),
-            );
-          }
-          return const SizedBox();
+          return ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: _settingsBuilder(context, state),
+          );
         },
       ),
     );

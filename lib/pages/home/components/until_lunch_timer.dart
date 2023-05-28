@@ -32,9 +32,8 @@ class _UntilLunchTimerState extends State<UntilLunchTimer> with WidgetsBindingOb
   void _initializeTimer() {
     final state = context.read<SettingsCubit>().state;
 
-    if (state is SettingsInitialized) {
-      _secondsUntilLunch = widget.durationUntilLunchCallback(state.lunchtimeTime)?.inSeconds;
-    }
+    _secondsUntilLunch = widget.durationUntilLunchCallback(state.lunchtimeTime)?.inSeconds;
+
     _timeUntilLunch?.cancel();
     if (_secondsUntilLunch != null) {
       _timeUntilLunch = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -88,9 +87,7 @@ class _UntilLunchTimerState extends State<UntilLunchTimer> with WidgetsBindingOb
   Widget build(BuildContext context) {
     return BlocListener<SettingsCubit, SettingsState>(
       listener: (context, state) => _initializeTimer(),
-      listenWhen: (prev, current) =>
-          (current is SettingsInitialized && prev is SettingsInitialized) &&
-          (current.lunchtimeTime != prev.lunchtimeTime),
+      listenWhen: (prev, current) => current.lunchtimeTime != prev.lunchtimeTime,
       child: _timerBuilder(),
     );
   }

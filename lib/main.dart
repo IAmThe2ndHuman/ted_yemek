@@ -27,11 +27,6 @@ void main() async {
   final preferences = await SharedPreferences.getInstance();
   // final deviceInfoPlugin = DeviceInfoPlugin();
 
-  final settingsRepository = SettingsRepository(
-    preferences, /*Platform.isAndroid && (await deviceInfoPlugin.androidInfo).version.sdkInt >= android12Sdk*/
-  );
-  final settingsCubit = SettingsCubit(settingsRepository);
-
   await initializeDateFormatting("tr_TR");
   await IsolateService.initialize();
   await NotificationService.initialize();
@@ -41,13 +36,18 @@ void main() async {
   ]);
 
   HttpOverrides.global = MyHttpOverrides(); // todo remove later
-  settingsCubit.initialize();
 
-  runApp(MultiRepositoryProvider(providers: [
-    RepositoryProvider<MenuRepository>(create: (_) => MenuRepository(preferences)),
-    RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository(preferences)),
-    RepositoryProvider<SettingsRepository>.value(value: settingsRepository)
-  ], child: BlocProvider.value(value: settingsCubit, child: const MyApp())));
+  runApp(MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<MenuRepository>(create: (_) => MenuRepository(preferences)),
+        RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository(preferences)),
+        RepositoryProvider<SettingsRepository>(
+            create: (_) => SettingsRepository(
+                  preferences,
+                ))
+      ],
+      child:
+          BlocProvider(create: (context) => SettingsCubit(context.read<SettingsRepository>()), child: const MyApp())));
 }
 
 class MyApp extends StatelessWidget {
@@ -57,51 +57,45 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     NotificationService.setListeners();
 
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      builder: (context, state) {
-        if (state is SettingsInitialized) {
-          return DynamicColorBuilder(builder: (light, dark) {
-            return MaterialApp(
-              title: appName,
-              theme: ThemeData(
-                useMaterial3: true,
-                colorScheme: light != null
-                    ? (state.brightness == AppBrightness.dark ? dark : light)
-                    : ColorScheme.fromSeed(
-                        seedColor: Colors.blue,
-                        brightness: state.brightness == AppBrightness.device
-                            ? Brightness.light
-                            : state.brightness.materialBrightness!),
-              ),
-              darkTheme: ThemeData(
-                useMaterial3: true,
-                colorScheme: dark != null
-                    ? (state.brightness == AppBrightness.light ? light : dark)
-                    : ColorScheme.fromSeed(
-                        seedColor: Colors.blue,
-                        brightness: state.brightness == AppBrightness.device
-                            ? Brightness.dark
-                            : state.brightness.materialBrightness!),
-              ),
-              routes: {
-                Home.routeName: (context) => MultiBlocProvider(
-                      providers: [
-                        BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
-                        BlocProvider<FavoritesCubit>(
-                            create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
-                        BlocProvider<ReminderCubit>(create: (context) => ReminderCubit()),
-                      ],
-                      child: const Home(),
-                    ),
-                Settings.routeName: (context) => Settings()
-              },
-              initialRoute: Home.routeName,
-            );
-          });
-        } else {
-          return Container();
-        }
-      },
-    );
+    return BlocBuilder<SettingsCubit, SettingsState>(builder: (context, state) {
+      return DynamicColorBuilder(builder: (light, dark) {
+        return MaterialApp(
+          title: appName,
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: light != null
+                ? (state.brightness == AppBrightness.dark ? dark : light)
+                : ColorScheme.fromSeed(
+                    seedColor: Colors.blue,
+                    brightness: state.brightness == AppBrightness.device
+                        ? Brightness.light
+                        : state.brightness.materialBrightness!),
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: dark != null
+                ? (state.brightness == AppBrightness.light ? light : dark)
+                : ColorScheme.fromSeed(
+                    seedColor: Colors.blue,
+                    brightness: state.brightness == AppBrightness.device
+                        ? Brightness.dark
+                        : state.brightness.materialBrightness!),
+          ),
+          routes: {
+            Home.routeName: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
+                    BlocProvider<FavoritesCubit>(
+                        create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
+                    BlocProvider<ReminderCubit>(create: (context) => ReminderCubit()),
+                  ],
+                  child: const Home(),
+                ),
+            Settings.routeName: (context) => Settings()
+          },
+          initialRoute: Home.routeName,
+        );
+      });
+    });
   }
 }
