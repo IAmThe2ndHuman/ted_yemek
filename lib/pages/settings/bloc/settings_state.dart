@@ -13,12 +13,12 @@ class SettingsInitial extends SettingsState {
 
 class SettingsInitialized extends SettingsState {
   final AppBrightness brightness;
-  final bool useWallpaperColors;
-  final Color customColor;
-  final bool supportsMaterial3;
+  // final bool useWallpaperColors;
+  // final Color customColor;
+  // final bool supportsMaterial3;
 
-  const SettingsInitialized(this.brightness, this.useWallpaperColors, this.customColor, this.supportsMaterial3);
+  const SettingsInitialized(this.brightness);
 
   @override
-  List<Object> get props => [brightness, useWallpaperColors, customColor, supportsMaterial3];
+  List<Object> get props => [brightness];
 }

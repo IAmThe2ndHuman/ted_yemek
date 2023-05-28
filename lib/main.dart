@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,14 +20,16 @@ import 'repositories/menu_repository.dart';
 import 'services/isolate_service.dart';
 import 'services/notification_service.dart';
 
+// todo add workmanager ios support
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final preferences = await SharedPreferences.getInstance();
-  final deviceInfoPlugin = DeviceInfoPlugin();
+  // final deviceInfoPlugin = DeviceInfoPlugin();
 
   final settingsRepository = SettingsRepository(
-      preferences, Platform.isAndroid && (await deviceInfoPlugin.androidInfo).version.sdkInt >= android12Sdk);
+    preferences, /*Platform.isAndroid && (await deviceInfoPlugin.androidInfo).version.sdkInt >= android12Sdk*/
+  );
   final settingsCubit = SettingsCubit(settingsRepository);
 
   await initializeDateFormatting("tr_TR");
@@ -64,20 +65,20 @@ class MyApp extends StatelessWidget {
               title: appName,
               theme: ThemeData(
                 useMaterial3: true,
-                colorScheme: state.useWallpaperColors && light != null
+                colorScheme: light != null
                     ? (state.brightness == AppBrightness.dark ? dark : light)
                     : ColorScheme.fromSeed(
-                        seedColor: state.customColor,
+                        seedColor: Colors.blue,
                         brightness: state.brightness == AppBrightness.device
                             ? Brightness.light
                             : state.brightness.materialBrightness!),
               ),
               darkTheme: ThemeData(
                 useMaterial3: true,
-                colorScheme: state.useWallpaperColors && dark != null
+                colorScheme: dark != null
                     ? (state.brightness == AppBrightness.light ? light : dark)
                     : ColorScheme.fromSeed(
-                        seedColor: state.customColor,
+                        seedColor: Colors.blue,
                         brightness: state.brightness == AppBrightness.device
                             ? Brightness.dark
                             : state.brightness.materialBrightness!),
