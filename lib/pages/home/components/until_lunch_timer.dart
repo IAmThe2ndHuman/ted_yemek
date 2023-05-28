@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ted_yemek/pages/settings/bloc/settings_cubit.dart';
 
 class UntilLunchTimer extends StatefulWidget {
-  final Duration? Function() durationUntilLunchCallback;
+  final Duration? Function(TimeOfDay) durationUntilLunchCallback;
 
-  const UntilLunchTimer(this.durationUntilLunchCallback, {Key? key})
-      : super(key: key);
+  const UntilLunchTimer(this.durationUntilLunchCallback, {Key? key}) : super(key: key);
 
   @override
   State<UntilLunchTimer> createState() => _UntilLunchTimerState();
 }
 
-class _UntilLunchTimerState extends State<UntilLunchTimer>
-    with WidgetsBindingObserver {
+class _UntilLunchTimerState extends State<UntilLunchTimer> with WidgetsBindingObserver {
   Timer? _timeUntilLunch;
   int? _secondsUntilLunch;
 
@@ -30,7 +30,12 @@ class _UntilLunchTimerState extends State<UntilLunchTimer>
   }
 
   void _initializeTimer() {
-    _secondsUntilLunch = widget.durationUntilLunchCallback()?.inSeconds;
+    final state = context.read<SettingsCubit>().state;
+
+    if (state is SettingsInitialized) {
+      _secondsUntilLunch = widget.durationUntilLunchCallback(state.lunchtimeTime)?.inSeconds;
+    }
+    _timeUntilLunch?.cancel();
     if (_secondsUntilLunch != null) {
       _timeUntilLunch = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (_secondsUntilLunch! <= 0) {
@@ -41,24 +46,28 @@ class _UntilLunchTimerState extends State<UntilLunchTimer>
           });
         }
       });
+    } else {
+      setState(() {});
     }
   }
 
-  Widget timerBuilder() {
-    final sec = (_secondsUntilLunch! % 60).toString().padLeft(2, "0");
-    final minPre = (_secondsUntilLunch! / 60).floor();
-    final min = (minPre % 60).toString().padLeft(2, "0");
-    final hour = (minPre / 60).floor().toString().padLeft(2, "0");
+  Widget _timerBuilder() {
+    if (_secondsUntilLunch != null && _timeUntilLunch != null) {
+      final sec = (_secondsUntilLunch! % 60).toString().padLeft(2, "0");
+      final minPre = (_secondsUntilLunch! / 60).floor();
+      final min = (minPre % 60).toString().padLeft(2, "0");
+      final hour = (minPre / 60).floor().toString().padLeft(2, "0");
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("YEMEK ZİLİNE KALAN SÜRE",
-            style: Theme.of(context).textTheme.labelMedium),
-        Text("$hour:$min:$sec",
-            style: Theme.of(context).textTheme.displayMedium),
-      ],
-    );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("YEMEK ZİLİNE KALAN SÜRE", style: Theme.of(context).textTheme.labelMedium),
+          Text("$hour:$min:$sec", style: Theme.of(context).textTheme.displayMedium),
+        ],
+      );
+    } else {
+      return Text("YEMEK ZİLİ ÇALMIŞTIR", style: Theme.of(context).textTheme.labelMedium);
+    }
   }
 
   @override
@@ -77,11 +86,12 @@ class _UntilLunchTimerState extends State<UntilLunchTimer>
 
   @override
   Widget build(BuildContext context) {
-    if (_secondsUntilLunch != null && _timeUntilLunch != null) {
-      return timerBuilder();
-    } else {
-      return Text("YEMEK ZİLİ ÇALMIŞTIR",
-          style: Theme.of(context).textTheme.labelMedium);
-    }
+    return BlocListener<SettingsCubit, SettingsState>(
+      listener: (context, state) => _initializeTimer(),
+      listenWhen: (prev, current) =>
+          (current is SettingsInitialized && prev is SettingsInitialized) &&
+          (current.lunchtimeTime != prev.lunchtimeTime),
+      child: _timerBuilder(),
+    );
   }
 }

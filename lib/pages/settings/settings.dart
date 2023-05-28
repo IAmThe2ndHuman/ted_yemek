@@ -47,16 +47,21 @@ class Settings extends StatelessWidget {
                     })
         ],
       ),
-      Divider(),
+      const Divider(),
       const SettingHeaderTile(title: "Zaman"),
       SettingTile(
         title: "Yemek saati",
         description: "Yemek zilinin saati",
         actions: [
-          Text("00:00", style: Theme.of(context).textTheme.headlineSmall),
+          Text(state.lunchtimeTime.format(context), style: Theme.of(context).textTheme.headlineSmall),
           SizedBox(width: 10),
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              final time = await showTimePicker(context: context, initialTime: state.lunchtimeTime);
+              if (time != null) {
+                await cubit.setLunchtimeTime(time);
+              }
+            },
             icon: Icon(Icons.edit_outlined),
           )
         ],
