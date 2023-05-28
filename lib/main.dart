@@ -20,7 +20,6 @@ import 'repositories/menu_repository.dart';
 import 'services/isolate_service.dart';
 import 'services/notification_service.dart';
 
-// todo add workmanager ios support
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
