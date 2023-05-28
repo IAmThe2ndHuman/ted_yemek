@@ -17,7 +17,7 @@ class Settings extends StatelessWidget {
     return [
       const SettingHeaderTile(title: "Görünüş"),
       SettingTile(
-        title: "Gece Modu",
+        title: "Gece modu",
         description: state.brightness.description,
         actions: [
           IconButton.filledTonal(
@@ -48,7 +48,7 @@ class Settings extends StatelessWidget {
         ],
       ),
       const Divider(),
-      const SettingHeaderTile(title: "Zaman"),
+      const SettingHeaderTile(title: "Menü"),
       SettingTile(
         title: "Yemek saati",
         description: "Yemek zilinin saati",
@@ -62,10 +62,17 @@ class Settings extends StatelessWidget {
                 await cubit.setLunchtimeTime(time);
               }
             },
-            icon: Icon(Icons.edit_outlined),
+            icon: const Icon(Icons.edit_outlined),
           )
         ],
-      )
+      ),
+      const SettingTile(
+        title: "Okul menüsü",
+        description: "Hangi okulun menüsünü göstermeli",
+        actions: [],
+      ),
+      const Divider(),
+      const SettingHeaderTile(title: "Hakkında"),
       // if (state.supportsMaterial3)
       //   ListTile(
       //     title: Text("Material You"),

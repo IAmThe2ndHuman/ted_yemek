@@ -10,6 +10,8 @@ class SettingsRepository {
   static const String _lunchtimeHour = "data.settings.lunchtime.h";
   static const String _lunchtimeMinute = "data.settings.lunchtime.m";
 
+  static const String _schoolType = "data.settings.school";
+
   final SharedPreferences preferences;
   // final bool supportsMaterial3;
 
@@ -29,7 +31,11 @@ class SettingsRepository {
     await preferences.setInt(_lunchtimeMinute, timeOfDay.minute);
   }
 
-  // bool get useWallpaperColors => preferences.getBool(_useWallpaperColors) ?? true;
+  SchoolType get schoolType => SchoolType.fromId(preferences.getInt(_schoolType));
+  Future<void> setSchoolType(SchoolType schoolType) async {
+    await preferences.setInt(_schoolType, schoolType.id);
+  }
+// bool get useWallpaperColors => preferences.getBool(_useWallpaperColors) ?? true;
   // Future<void> setUseWallpaperColors(bool value) async {
   //   await preferences.setBool(_useWallpaperColors, value);
   // }
@@ -45,8 +51,38 @@ class SettingsRepository {
   // }
 }
 
+enum SchoolType {
+  // kindergarten(1),
+  middle(2),
+  high(3);
+
+  final int id;
+  const SchoolType(this.id);
+
+  factory SchoolType.fromId(int? value) {
+    switch (value) {
+      // case 1:
+      //   return AppBrightness.light;
+      case 2:
+        return SchoolType.middle;
+      case _:
+        return SchoolType.high;
+    }
+  }
+
+  @override
+  String toString() {
+    switch (this) {
+      case SchoolType.middle:
+        return "Ortaokul";
+      case SchoolType.high:
+        return "Lise";
+    }
+  }
+}
+
 enum AppBrightness {
-  device(null, 2, "Cihazınızın temasına uymaktadır"),
+  device(null, 2, "Cihazın temasına uymaktadır"),
   light(Brightness.light, 0, "Gündüz modundadır"),
   dark(Brightness.dark, 1, "Gece modundadır");
 
@@ -72,18 +108,6 @@ enum AppBrightness {
         return AppBrightness.light;
       case Brightness.dark:
         return AppBrightness.dark;
-    }
-  }
-
-  @override
-  String toString() {
-    switch (this) {
-      case light:
-        return "Gündüz";
-      case dark:
-        return "Gece";
-      case device:
-        return "Otomatik";
     }
   }
 }
