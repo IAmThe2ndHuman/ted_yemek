@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class SettingTile extends StatelessWidget {
   final String title;
   final String? description;
-  final List<Widget> actions;
+  final List<Widget>? actions;
 
-  const SettingTile({Key? key, required this.title, this.description, required this.actions}) : super(key: key);
+  const SettingTile({Key? key, required this.title, this.description, this.actions}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class SettingTile extends StatelessWidget {
               ],
             ),
           ),
-          ...actions
+          ...?actions
         ],
       ),
     );

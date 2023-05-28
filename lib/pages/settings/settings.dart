@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ted_yemek/constants.dart';
 import 'package:ted_yemek/pages/settings/bloc/settings_cubit.dart';
 import 'package:ted_yemek/pages/settings/components/setting_header_tile.dart';
 import 'package:ted_yemek/pages/settings/components/setting_tile.dart';
@@ -107,7 +110,95 @@ class Settings extends StatelessWidget {
         ],
       ),
       const Divider(),
+      // SizedBox(
+      //   height: 8,
+      // ),
       const SettingHeaderTile(title: "Hakkında"),
+      // SettingTile(title: "Yazılımcı", description: "Koray Öztürkler"),
+      // FutureBuilder<PackageInfo>(
+      //   future: PackageInfo.fromPlatform(),
+      //   builder: (context, snapshot) => SettingTile(title: "Sürüm", description: "v${snapshot.data?.version}"),
+      // ),
+      Card(
+        elevation: 0,
+        color: Theme.of(context).colorScheme.surfaceVariant,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.restaurant_menu,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    appName,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Text("YAZILIMCI", style: Theme.of(context).textTheme.labelSmall),
+              GestureDetector(
+                onLongPress: () => showDialog(
+                    context: context,
+                    builder: (_) => SimpleDialog(
+                          children: [Image.asset("assets/moment.png")],
+                        )),
+                child: Text(
+                  "Koray Öztürkler",
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text("SÜRÜM", style: Theme.of(context).textTheme.labelSmall),
+              FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) => Text("v${snapshot.data?.version}"),
+              ),
+              const SizedBox(height: 10),
+              Text("SDK SÜRÜMÜ", style: Theme.of(context).textTheme.labelSmall),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    "assets/flutter.svg",
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    height: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    "v3.7.0",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  )
+                ],
+              ),
+              SizedBox(height: 10),
+              Divider(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image.asset(
+                      "assets/VAKIF_LOGO.png",
+                      scale: 8,
+                    ),
+                    Flexible(
+                      child: Text("TED İSTANBUL KOLEJİ VAKFI", style: Theme.of(context).textTheme.labelLarge),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      )
       // if (state.supportsMaterial3)
       //   ListTile(
       //     title: Text("Material You"),

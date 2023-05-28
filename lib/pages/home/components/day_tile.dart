@@ -12,9 +12,11 @@ class DayTile extends StatelessWidget {
       title: Row(
         children: [
           Text(DateFormat("EEEE", "tr_TR").format(date), style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(width: 10),
-          const Expanded(child: Divider()),
-          const SizedBox(width: 10),
+          const Expanded(
+              child: Divider(
+            indent: 10,
+            endIndent: 10,
+          )),
           Text(DateFormat("d MMMM", "tr_TR").format(date),
               textAlign: TextAlign.center, style: Theme.of(context).textTheme.labelSmall)
         ],

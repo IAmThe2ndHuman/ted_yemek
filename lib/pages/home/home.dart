@@ -1,11 +1,7 @@
-import 'dart:async';
-
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ted_yemek/constants.dart';
-import 'package:ted_yemek/pages/home/modals/about_modal.dart';
 import 'package:ted_yemek/pages/home/modals/debug_modal.dart';
 import 'package:ted_yemek/pages/settings/bloc/settings_cubit.dart';
 
@@ -90,18 +86,6 @@ class _HomeState extends State<Home> {
         });
   }
 
-  Future<void> _showAboutDialog() async {
-    final pkgInfo = await PackageInfo.fromPlatform();
-
-    if (mounted) {
-      await showDialog(
-          context: context,
-          builder: (context) {
-            return AboutModal(packageInfo: pkgInfo);
-          });
-    }
-  }
-
   void _showClearFavoritesDialog() {
     showDialog(
         context: context,
@@ -154,7 +138,6 @@ class _HomeState extends State<Home> {
                 child: const ReminderIconButton(), // gotta keep it const somehow eh
               ),
             ),
-            IconButton(onPressed: _showAboutDialog, icon: const Icon(Icons.info_outline)),
             IconButton(
                 onPressed: () => Navigator.pushNamed(context, Settings.routeName),
                 icon: const Icon(Icons.settings_outlined)),
