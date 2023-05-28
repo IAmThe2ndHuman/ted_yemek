@@ -1,9 +1,3 @@
-SystemCapabilities = {
-	com.apple.BackgroundModes = {
-		enabled = 1;
-	};
-};
-
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
