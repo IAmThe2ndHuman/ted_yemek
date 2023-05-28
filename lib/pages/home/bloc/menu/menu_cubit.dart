@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:ted_yemek/repositories/settings_repository.dart';
 
 import '../../../../models/error.dart';
 import '../../../../models/menu.dart';
@@ -11,22 +12,22 @@ class MenuCubit extends Cubit<MenuState> {
   final MenuRepository _menuRepository;
   MenuCubit(this._menuRepository) : super(const MenuInitial());
 
-  Future<void> initializeMenu() async {
+  Future<void> initializeMenu(SchoolType schoolType) async {
     emit(const MenuLoading());
 
     try {
-      var html = await _menuRepository.getCachedHtml();
+      var html = await _menuRepository.getCachedHtml(schoolType);
       var cache = false;
 
       if (html == null) {
-        html = await _menuRepository.fetchMenuHtml();
+        html = await _menuRepository.fetchMenuHtml(schoolType);
         cache = true;
       }
 
-      final menu = Menu.fromHtml(html);
+      final menu = Menu.fromHtml(html, schoolType);
       emit(MenuLoaded(menu));
 
-      if (cache) await _menuRepository.setCacheHtml(html);
+      if (cache) await _menuRepository.setCacheHtml(html, schoolType);
     } on AppError catch (e) {
       emit(MenuError(e));
     } catch (e) {

@@ -5,42 +5,45 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ted_yemek/models/error.dart';
+import 'package:ted_yemek/repositories/settings_repository.dart';
 
 // TODO: maybe add the List<String>? _favoriteDishes; thing here too
 class MenuRepository {
-  static final Uri menuUri = Uri.https("www.tedistanbul.com.tr", "/sofra/MobilHaftalik.aspx", {"school": "3"});
   static const String _cache = "cache.html";
   static const String _cacheExpr = "cache.html.expiration";
+
+  static String _getCachePathOfSchool(SchoolType schoolType) => "$_cache.${schoolType.id}";
+  static String _getCacheExprPathOfSchool(SchoolType schoolType) => "$_cacheExpr.${schoolType.id}";
 
   final SharedPreferences preferences;
   const MenuRepository(this.preferences);
 
-  Future<String?> getCachedHtml() async {
+  Future<String?> getCachedHtml(SchoolType schoolType) async {
     final now = DateTime.now();
-    final cacheExpiration = preferences.getInt(_cacheExpr); // EPOCH (MS)
+    final cacheExpiration = preferences.getInt(_getCacheExprPathOfSchool(schoolType)); // EPOCH (MS)
 
     if (cacheExpiration != null && cacheExpiration > now.millisecondsSinceEpoch) {
-      final htmlCache = preferences.getString(_cache);
+      final htmlCache = preferences.getString(_getCachePathOfSchool(schoolType));
       if (htmlCache != null) return htmlCache;
     }
     return null;
   }
 
-  Future<void> setCacheHtml(String html) async {
+  Future<void> setCacheHtml(String html, SchoolType schoolType) async {
     final now = DateTime.now();
-    await preferences.setString(_cache, html);
+    await preferences.setString(_getCachePathOfSchool(schoolType), html);
 
     final expirationDate = DateTime(now.year, now.month, now.day).add(Duration(days: 8 - now.weekday));
-    await preferences.setInt("cache.html.expiration", expirationDate.millisecondsSinceEpoch);
+    await preferences.setInt(_getCacheExprPathOfSchool(schoolType), expirationDate.millisecondsSinceEpoch);
   }
 
-  Future<void> clearCache() async {
-    await preferences.remove(_cacheExpr);
-    await preferences.remove(_cache);
+  Future<void> clearCache(SchoolType schoolType) async {
+    await preferences.remove(_getCacheExprPathOfSchool(schoolType));
+    await preferences.remove(_getCachePathOfSchool(schoolType));
   }
 
-  Future<bool> get menuCacheValid async {
-    final cacheExpiration = preferences.getInt(_cacheExpr);
+  bool menuCacheValid(SchoolType schoolType) {
+    final cacheExpiration = preferences.getInt(_getCacheExprPathOfSchool(schoolType));
     if (cacheExpiration == null) return false;
 
     final now = DateTime.now();
@@ -48,10 +51,14 @@ class MenuRepository {
     return cacheExpiration > now.millisecondsSinceEpoch;
   }
 
-  Future<String> fetchMenuHtml() async {
+  static Uri getMenuUri(SchoolType schoolType) {
+    return Uri.https("www.tedistanbul.com.tr", "/sofra/MobilHaftalik.aspx", {"school": schoolType.id.toString()});
+  }
+
+  Future<String> fetchMenuHtml(SchoolType schoolType) async {
     final Response response;
     try {
-      response = await http.get(menuUri);
+      response = await http.get(getMenuUri(schoolType));
     } catch (e) {
       throw AppError(
           "Bağlantı hatası",

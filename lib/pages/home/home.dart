@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ted_yemek/constants.dart';
 import 'package:ted_yemek/pages/home/modals/about_modal.dart';
 import 'package:ted_yemek/pages/home/modals/debug_modal.dart';
+import 'package:ted_yemek/pages/settings/bloc/settings_cubit.dart';
 
 import '../../repositories/menu_repository.dart';
 import '../settings/settings.dart';
@@ -65,7 +66,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    context.read<MenuCubit>().initializeMenu();
+    context.read<MenuCubit>().initializeMenu(context.read<SettingsCubit>().state.schoolType);
     context.read<FavoritesCubit>().initializeFavorites();
     context.read<ReminderCubit>().initializeReminder();
   }
@@ -84,6 +85,7 @@ class _HomeState extends State<Home> {
           return DebugModal(
             menuRepository: this.context.read<MenuRepository>(),
             menuCubit: this.context.read<MenuCubit>(),
+            settingsCubit: this.context.read<SettingsCubit>(),
           );
         });
   }
@@ -128,9 +130,17 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<FavoritesCubit, FavoritesState>(
-      // FOR FAB
-      listener: (context, state) => _toggleFab(state),
+    return MultiBlocListener(
+      listeners: [
+        // FOR FAB
+        BlocListener<FavoritesCubit, FavoritesState>(
+          listener: (context, state) => _toggleFab(state),
+        ),
+        BlocListener<SettingsCubit, SettingsState>(
+          listener: (context, state) => context.read<MenuCubit>().initializeMenu(state.schoolType),
+          listenWhen: (prev, current) => prev.schoolType != current.schoolType,
+        )
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: GestureDetector(onLongPress: _showDebugDialog, child: const Text(appName)),

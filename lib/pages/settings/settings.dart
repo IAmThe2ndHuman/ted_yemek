@@ -75,7 +75,7 @@ class Settings extends StatelessWidget {
       ),
       SettingTile(
         title: "Okul menüsü",
-        description: "Uygulama hangi okulun menüsünü göstermeli",
+        description: "Uygulamanın gösterdiği menü",
         actions: [
           PopupMenuButton<SchoolType>(
               icon: Padding(

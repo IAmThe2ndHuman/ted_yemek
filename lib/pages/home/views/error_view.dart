@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../models/error.dart';
+import '../../settings/bloc/settings_cubit.dart';
 import '../bloc/menu/menu_cubit.dart';
 
 class ErrorView extends StatelessWidget {
@@ -31,7 +32,8 @@ class ErrorView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton.icon(
-                  onPressed: error.customCallback ?? context.read<MenuCubit>().initializeMenu,
+                  onPressed: error.customCallback ??
+                      () => context.read<MenuCubit>().initializeMenu(context.read<SettingsCubit>().state.schoolType),
                   icon: const Icon(Icons.refresh),
                   label: const Text("Yenile"),
                 ),

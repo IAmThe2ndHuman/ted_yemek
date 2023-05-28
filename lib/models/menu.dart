@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:ted_yemek/models/error.dart';
+import 'package:ted_yemek/repositories/settings_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../repositories/menu_repository.dart';
@@ -18,7 +19,7 @@ class Menu {
     return days[now.weekday - 1];
   }
 
-  factory Menu.fromHtml(String html) {
+  factory Menu.fromHtml(String html, SchoolType schoolType) {
     try {
       final document = parse(html);
 
@@ -47,7 +48,7 @@ class Menu {
               "Şimdilik, menüye yenile butonuyla alternatif bir şekilde erişebilirsiniz.",
           e.toString(),
           Icons.code,
-          () => launchUrl(MenuRepository.menuUri, mode: LaunchMode.externalApplication));
+          () => launchUrl(MenuRepository.getMenuUri(schoolType), mode: LaunchMode.externalApplication));
     }
   }
 

@@ -52,17 +52,17 @@ class SettingsRepository {
 }
 
 enum SchoolType {
-  // kindergarten(1),
+  high(3),
   middle(2),
-  high(3);
+  kindergarten(1);
 
   final int id;
   const SchoolType(this.id);
 
   factory SchoolType.fromId(int? value) {
     switch (value) {
-      // case 1:
-      //   return AppBrightness.light;
+      case 1:
+        return SchoolType.kindergarten;
       case 2:
         return SchoolType.middle;
       case _:
@@ -73,10 +73,12 @@ enum SchoolType {
   @override
   String toString() {
     switch (this) {
+      case SchoolType.kindergarten:
+        return "Anaokul";
       case SchoolType.middle:
-        return "Ortaokul";
+        return "İlkokul";
       case SchoolType.high:
-        return "Lise";
+        return "Lise/Ortaokul";
     }
   }
 }

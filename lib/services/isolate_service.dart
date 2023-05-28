@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ted_yemek/repositories/settings_repository.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../models/menu.dart';
@@ -19,13 +20,19 @@ void _callbackDispatcher() {
 
     final menuRepo = MenuRepository(preferences);
     final favoritesRepo = FavoritesRepository(preferences);
+    final settingsRepo = SettingsRepository(preferences);
+
     final now = DateTime.now();
 
     HttpOverrides.global = MyHttpOverrides(); // todo remove later
 
     try {
       await initializeDateFormatting("tr_TR");
-      final day = Menu.fromHtml(await menuRepo.getCachedHtml() ?? await menuRepo.fetchMenuHtml()).days[now.weekday - 1];
+      final day = Menu.fromHtml(
+              await menuRepo.getCachedHtml(settingsRepo.schoolType) ??
+                  await menuRepo.fetchMenuHtml(settingsRepo.schoolType),
+              settingsRepo.schoolType)
+          .days[now.weekday - 1];
       final favorites = await favoritesRepo.favoriteDishes;
 
       final intersection = day.dishes.toSet().intersection(favorites.toSet());
