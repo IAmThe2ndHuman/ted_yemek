@@ -23,11 +23,3 @@ class SettingsInitialized extends SettingsState {
   @override
   List<Object> get props => [brightness, lunchtimeTime];
 }
-
-class SettingsBrightnessUpdated extends SettingsInitialized {
-  const SettingsBrightnessUpdated(super.brightness, super.lunchtimeTime);
-}
-
-class SettingsLunchtimeTimeUpdated extends SettingsInitialized {
-  const SettingsLunchtimeTimeUpdated(super.brightness, super.lunchtimeTime);
-}
