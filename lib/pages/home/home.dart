@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -129,7 +131,7 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: GestureDetector(onLongPress: _showDebugDialog, child: const Text(appName)),
           actions: [
-            IgnorePointer(
+            if (Platform.isAndroid) IgnorePointer(
               // fight me
               ignoring: _viewIndex != 1,
               child: AnimatedOpacity(
@@ -152,7 +154,7 @@ class _HomeState extends State<Home> {
                   child: child,
                 )),
             child: _views[_viewIndex]),
-        bottomNavigationBar: NavigationBar(
+        bottomNavigationBar: Platform.isAndroid ? NavigationBar(
           selectedIndex: _viewIndex,
           onDestinationSelected: (view) {
             _viewIndex = view;
@@ -167,8 +169,8 @@ class _HomeState extends State<Home> {
             NavigationDestination(
                 icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: "Favoriler"),
           ],
-        ),
-        floatingActionButton: _showFab
+        ) : null,
+        floatingActionButton: _showFab && Platform.isAndroid
             ? FloatingActionButton(
                 onPressed: _showClearFavoritesDialog,
                 child: const Icon(Icons.delete_forever),

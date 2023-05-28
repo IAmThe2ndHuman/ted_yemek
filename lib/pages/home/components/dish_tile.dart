@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +33,7 @@ class _DishTileState extends State<DishTile> {
         dense: true,
         title: Text(widget.dishName, style: Theme.of(context).textTheme.bodyLarge),
         leading: const Icon(Icons.remove),
-        trailing: BlocBuilder<FavoritesCubit, FavoritesState>(
+        trailing: Platform.isAndroid ? BlocBuilder<FavoritesCubit, FavoritesState>(
           builder: (context, state) {
             bool favorited = false;
             if (state is FavoriteAdded && state.addedDish == widget.dishName) {
@@ -47,6 +48,6 @@ class _DishTileState extends State<DishTile> {
                 icon: Icon(favorited ? Icons.favorite : Icons.favorite_border),
                 onPressed: () => toggleFavorite(favorited));
           },
-        ));
+        ) : null);
   }
 }

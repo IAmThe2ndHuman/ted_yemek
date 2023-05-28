@@ -27,8 +27,11 @@ void main() async {
   // final deviceInfoPlugin = DeviceInfoPlugin();
 
   await initializeDateFormatting("tr_TR");
-  await IsolateService.initialize();
-  await NotificationService.initialize();
+
+  if (Platform.isAndroid) {
+    await IsolateService.initialize();
+    await NotificationService.initialize();
+  }
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -38,15 +41,19 @@ void main() async {
 
   runApp(MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<MenuRepository>(create: (_) => MenuRepository(preferences)),
-        RepositoryProvider<FavoritesRepository>(create: (_) => FavoritesRepository(preferences)),
+        RepositoryProvider<MenuRepository>(
+            create: (_) => MenuRepository(preferences)),
+        RepositoryProvider<FavoritesRepository>(
+            create: (_) => FavoritesRepository(preferences)),
         RepositoryProvider<SettingsRepository>(
             create: (_) => SettingsRepository(
                   preferences,
                 ))
       ],
-      child:
-          BlocProvider(create: (context) => SettingsCubit(context.read<SettingsRepository>()), child: const MyApp())));
+      child: BlocProvider(
+          create: (context) =>
+              SettingsCubit(context.read<SettingsRepository>()),
+          child: const MyApp())));
 }
 
 class MyApp extends StatelessWidget {
@@ -83,10 +90,14 @@ class MyApp extends StatelessWidget {
           routes: {
             Home.routeName: (context) => MultiBlocProvider(
                   providers: [
-                    BlocProvider<MenuCubit>(create: (context) => MenuCubit(context.read<MenuRepository>())),
+                    BlocProvider<MenuCubit>(
+                        create: (context) =>
+                            MenuCubit(context.read<MenuRepository>())),
                     BlocProvider<FavoritesCubit>(
-                        create: (context) => FavoritesCubit(context.read<FavoritesRepository>())),
-                    BlocProvider<ReminderCubit>(create: (context) => ReminderCubit()),
+                        create: (context) => FavoritesCubit(
+                            context.read<FavoritesRepository>())),
+                    BlocProvider<ReminderCubit>(
+                        create: (context) => ReminderCubit()),
                   ],
                   child: const Home(),
                 ),
