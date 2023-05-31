@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
                   ],
                   child: const Home(),
                 ),
-            Settings.routeName: (context) => Settings()
+            Settings.routeName: (context) => const Settings()
           },
           initialRoute: Home.routeName,
         );

@@ -82,7 +82,7 @@ class Settings extends StatelessWidget {
         actions: [
           PopupMenuButton<SchoolType>(
               icon: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -134,14 +134,14 @@ class Settings extends StatelessWidget {
                     Icons.restaurant_menu,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     appName,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text("YAZILIMCI", style: Theme.of(context).textTheme.labelSmall),
               GestureDetector(
                 onLongPress: () => showDialog(
@@ -149,7 +149,7 @@ class Settings extends StatelessWidget {
                     builder: (_) => SimpleDialog(
                           children: [Image.asset("assets/moment.png")],
                         )),
-                child: Text(
+                child: const Text(
                   "Koray Öztürkler",
                 ),
               ),
@@ -176,7 +176,7 @@ class Settings extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Divider(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
