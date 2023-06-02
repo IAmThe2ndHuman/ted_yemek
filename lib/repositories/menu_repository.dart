@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ted_yemek/models/error.dart';
 import 'package:ted_yemek/repositories/settings_repository.dart';
@@ -65,7 +64,7 @@ class MenuRepository {
   }
 
   Future<String> fetchMenuHtml(SchoolType schoolType) async {
-    final Response response;
+    final http.Response response;
     try {
       response = await http.get(getMenuUri(schoolType),
           headers: {"Access-Control-Allow-Origin": "*"});

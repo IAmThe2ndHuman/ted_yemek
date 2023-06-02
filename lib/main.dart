@@ -38,7 +38,9 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  HttpOverrides.global = MyHttpOverrides(); // todo remove later
+  if (!kIsWeb) {
+      HttpOverrides.global = MyHttpOverrides(); // todo remove later????
+  }
 
   runApp(MultiRepositoryProvider(
       providers: [
