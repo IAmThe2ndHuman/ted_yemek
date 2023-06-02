@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +11,8 @@ class DishTile extends StatefulWidget {
   final bool dense;
   // final Icon? _dishIcon;
 
-  const DishTile({Key? key, required this.dishName, this.dense = false}) : super(key: key);
+  const DishTile({Key? key, required this.dishName, this.dense = false})
+      : super(key: key);
 
   @override
   State<DishTile> createState() => _DishTileState();
@@ -29,25 +30,32 @@ class _DishTileState extends State<DishTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        contentPadding: widget.dense ? const EdgeInsets.symmetric(horizontal: 0) : null,
+        contentPadding:
+            widget.dense ? const EdgeInsets.symmetric(horizontal: 0) : null,
         dense: true,
-        title: Text(widget.dishName, style: Theme.of(context).textTheme.bodyLarge),
+        title:
+            Text(widget.dishName, style: Theme.of(context).textTheme.bodyLarge),
         leading: const Icon(Icons.remove),
-        trailing: Platform.isAndroid ? BlocBuilder<FavoritesCubit, FavoritesState>(
-          builder: (context, state) {
-            bool favorited = false;
-            if (state is FavoriteAdded && state.addedDish == widget.dishName) {
-              favorited = true;
-              // } else if (state is FavoriteRemoved && state.removedDish == widget.dishName) {
-              //   favorited = false;
-            } else if (state is FavoritesLoaded && state.favorites.contains(widget.dishName)) {
-              favorited = true;
-            }
+        trailing: defaultTargetPlatform == TargetPlatform.android
+            ? BlocBuilder<FavoritesCubit, FavoritesState>(
+                builder: (context, state) {
+                  bool favorited = false;
+                  if (state is FavoriteAdded &&
+                      state.addedDish == widget.dishName) {
+                    favorited = true;
+                    // } else if (state is FavoriteRemoved && state.removedDish == widget.dishName) {
+                    //   favorited = false;
+                  } else if (state is FavoritesLoaded &&
+                      state.favorites.contains(widget.dishName)) {
+                    favorited = true;
+                  }
 
-            return IconButton(
-                icon: Icon(favorited ? Icons.favorite : Icons.favorite_border),
-                onPressed: () => toggleFavorite(favorited));
-          },
-        ) : null);
+                  return IconButton(
+                      icon: Icon(
+                          favorited ? Icons.favorite : Icons.favorite_border),
+                      onPressed: () => toggleFavorite(favorited));
+                },
+              )
+            : null);
   }
 }
