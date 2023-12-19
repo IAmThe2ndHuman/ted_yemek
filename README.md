@@ -1,9 +1,8 @@
-# ted_yemek
-yemek app for school
+# [TEDİST Yemek](https://play.google.com/store/apps/details?id=com.iamahuman.tedistyemek)
+This is an app I made for my K-12 school that makes it easy to access the lunch menu. Works with the preschool, primary school, and middle+high school menus.
 
-## version conmtrol tips and tricks
-- master: bleeding edge branch, i will probably commit to a version branch once a release is ready??
- i have no idea how to do this correctly
-- X.X.x: version branches (tags handle individual releases epicly)
-
-tip: try to commit for every feature (method/refactor/indentation) that WON'T cause an error
+## Features
+- Caching for offline use
+- Favoriting system to be notified of favorite dishes on a certain day
+- Customizable countdown until lunchtime
+- Dark mode and material you support
