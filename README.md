@@ -6,5 +6,3 @@ This is an app I made for my K-12 school that makes it easy to access the lunch 
 - Favoriting system to be notified of favorite dishes on a certain day
 - Customizable countdown until lunchtime
 - Dark mode and material you support
-
-(ps sorry about my atrocious commit messages, it's a personal project I never thought I'd open source 😐😐😐😐)
